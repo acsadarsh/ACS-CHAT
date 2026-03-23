@@ -3,135 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
     <title>ACS Chat App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: #e0e5ec; display: flex; justify-content: center; height: 100vh; align-items: center; margin: 0; overflow: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: #f4f7f6; display: flex; justify-content: center; height: 100dvh; align-items: center; margin: 0; overflow: hidden; }
         
-        .app-container { width: 100vw; height: 100vh; max-width: 100%; background: #ffffff; position: relative; display: flex; flex-direction: column; overflow: hidden; }
+        .app-container { width: 100vw; height: 100dvh; max-width: 100%; background: #ffffff; position: relative; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.1); }
         .screen { display: none; width: 100%; height: 100%; flex-direction: column; background: white; overflow-y: auto; }
-        .active { display: flex; }
+        .active { display: flex; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Auth Screen */
-        .auth-logo { text-align: center; color: #1f4e79; font-size: 32px; font-weight: bold; margin: 30px 0 10px 0; font-style: italic; }
-        .auth-logo span { color: #333; font-style: normal; }
-        .handled-by { text-align: center; color: #d4af37; font-weight: bold; font-size: 14px; margin-bottom: 20px; text-shadow: 1px 1px 2px rgba(0,0,0,0.1); }
+        .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-gradient { background: linear-gradient(to right, #11998e, #38ef7d); color: white; border: none; padding: 14px; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4); transition: transform 0.2s; }
+        .btn-gradient:active { transform: scale(0.95); }
+        .btn-premium { background: linear-gradient(to right, #f2c94c, #f2994a); box-shadow: 0 4px 15px rgba(242, 153, 74, 0.4); color: white; }
+        .btn-danger { background: linear-gradient(to right, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); }
+
+        .auth-logo { text-align: center; margin: 30px 0 5px 0; }
+        .auth-logo img { width: 90px; height: 90px; border-radius: 50%; border: 3px solid #764ba2; object-fit: cover; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .handled-by { text-align: center; color: #f2994a; font-weight: bold; font-size: 13px; margin-bottom: 25px; letter-spacing: 0.5px; }
         
         .tabs { display: flex; border-bottom: 2px solid #f0f0f0; margin-bottom: 20px; flex-shrink: 0; }
-        .tab { flex: 1; padding: 15px 5px; text-align: center; cursor: pointer; font-weight: 600; color: #888; font-size: 15px; }
-        .tab.active-tab { color: #1f4e79; border-bottom: 3px solid #1f4e79; }
+        .tab { flex: 1; padding: 15px 5px; text-align: center; cursor: pointer; font-weight: bold; color: #aaa; font-size: 15px; transition: 0.3s; }
+        .tab.active-tab { color: #667eea; border-bottom: 3px solid #667eea; }
 
         .form-container { padding: 0 25px; display: none; flex-direction: column; flex-shrink: 0; padding-bottom: 30px;}
         .form-container.active-form { display: flex; }
         
         .input-group { position: relative; width: 100%; margin-bottom: 15px; }
-        .input-box { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 25px; font-size: 14px; outline: none; background: #fafafa; }
-        .input-box:focus { border-color: #1f4e79; }
-        .status-icon { position: absolute; right: 15px; top: 14px; font-size: 16px; }
+        .input-box { width: 100%; padding: 15px 20px; border: 2px solid #eee; border-radius: 25px; font-size: 15px; outline: none; background: #fafafa; transition: 0.3s; }
+        .input-box:focus { border-color: #667eea; background: white; box-shadow: 0 0 10px rgba(102, 126, 234, 0.1); }
+        .status-icon { position: absolute; right: 20px; top: 16px; font-size: 16px; }
 
-        .btn { background: #3b5998; color: white; border: none; padding: 14px; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 10px;}
-        .btn-premium { background: #d4af37; color: black; }
-        .btn-danger { background: #dc3545; color: white; }
-        .btn-success { background: #25D366; color: white; margin-top: 15px; }
+        .security-box { border: 2px dashed #667eea; border-radius: 15px; padding: 20px 15px 15px 15px; margin-bottom: 15px; position: relative; margin-top: 10px; background: rgba(102, 126, 234, 0.03); }
+        .security-title { position: absolute; top: -12px; left: 15px; background: white; padding: 0 10px; font-size: 13px; font-weight: bold; color: #667eea; }
+        .sec-select { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 10px; border: 1px solid #ddd; outline: none; font-size: 14px; }
 
-        .security-box { border: 1.5px solid #1f4e79; border-radius: 10px; padding: 15px; margin-bottom: 15px; position: relative; margin-top: 10px;}
-        .security-title { position: absolute; top: -10px; left: 15px; background: white; padding: 0 5px; font-size: 12px; font-weight: bold; color: #1f4e79; }
-        .sec-select { width: 100%; padding: 10px; margin-bottom: 10px; border-radius: 10px; border: 1px solid #ddd; outline: none; }
+        .profile-pic-upload { text-align: center; margin: 10px 0 25px 0; position: relative; cursor: pointer; display: flex; justify-content: center; }
+        .profile-pic-upload img { width: 90px; height: 90px; border-radius: 50%; border: 4px solid #667eea; object-fit: cover; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .profile-pic-upload i { position: absolute; bottom: 0; transform: translateX(30px); background: #11998e; color: white; border-radius: 50%; padding: 8px; font-size: 14px; border: 2px solid white; }
 
-        .profile-pic-upload { text-align: center; margin: 10px 0 20px 0; position: relative; cursor: pointer; }
-        .profile-pic-upload img { width: 80px; height: 80px; border-radius: 50%; border: 3px solid #1f4e79; object-fit: cover; }
-        .profile-pic-upload i { position: absolute; bottom: 0; right: 50%; transform: translateX(35px); background: #1f4e79; color: white; border-radius: 50%; padding: 6px; font-size: 12px; }
+        .link-text { text-align: center; color: #764ba2; margin-top: 15px; cursor: pointer; font-size: 14px; font-weight: bold; }
 
-        .link-text { text-align: center; color: #1f4e79; margin-top: 15px; cursor: pointer; font-size: 14px; font-weight: bold; }
-
-        /* Home Screen */
-        .home-header { padding: 10px 20px; background: #1f4e79; color: white; display: flex; flex-direction: column; }
+        /* Home Header */
+        .home-header { padding: 15px 20px; display: flex; flex-direction: column; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
         .home-top { display: flex; justify-content: space-between; align-items: center; }
-        .home-logo-area { display: flex; align-items: center; gap: 10px; }
-        .home-logo-area img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
-        .home-logo-area h2 { font-size: 20px; margin: 0; }
-        .profile-icon img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid white; cursor: pointer; object-fit: cover; }
+        .home-logo-area { display: flex; align-items: center; gap: 12px; }
+        .home-logo-area h2 { font-size: 22px; margin: 0; letter-spacing: 0.5px; }
+        .profile-icon img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid white; cursor: pointer; object-fit: cover; background: white; }
         
-        .search-container { padding: 15px; background: white; border-bottom: 1px solid #f0f0f0; }
+        .search-container { padding: 15px 20px; background: white; }
         .search-box { position: relative; }
-        .search-box i { position: absolute; left: 15px; top: 12px; color: #888; }
-        .search-box input { width: 100%; padding: 10px 10px 10px 40px; border-radius: 20px; border: 1px solid #eee; background: #f5f6f8; outline: none; }
+        .search-box i { position: absolute; left: 18px; top: 14px; color: #888; }
+        .search-box input { width: 100%; padding: 12px 15px 12px 45px; border-radius: 25px; border: none; background: #f0f2f5; outline: none; font-size: 15px; }
 
         .chat-list { flex: 1; overflow-y: auto; background: white; padding-bottom: 20px;}
-        .chat-item { display: flex; align-items: center; padding: 12px 20px; cursor: pointer; }
-        .chat-item:hover { background: #f4f6f9; }
-        .chat-item img { width: 55px; height: 55px; border-radius: 50%; margin-right: 15px; object-fit: cover; border: 1px solid #eee; }
-        .chat-details { flex: 1; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px; }
+        .chat-item { display: flex; align-items: center; padding: 15px 20px; cursor: pointer; border-bottom: 1px solid #f9f9f9; transition: 0.2s; }
+        .chat-item:active { background: #f0f2f5; }
+        .chat-item img { width: 55px; height: 55px; border-radius: 50%; margin-right: 15px; flex-shrink: 0; object-fit: cover; border: 1px solid #eee; }
+        .chat-details { flex: 1; overflow: hidden; }
         .chat-name-time { display: flex; justify-content: space-between; margin-bottom: 5px; }
-        .chat-name { font-weight: 600; font-size: 16px; color: #333; text-transform: capitalize; }
-        .chat-time { font-size: 12px; color: #888; }
-        .chat-msg { font-size: 14px; color: #666; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 200px; color: #1f4e79; }
+        .chat-name { font-weight: 700; font-size: 16px; color: #2c3e50; text-transform: capitalize; }
+        .chat-msg { font-size: 14px; color: #7f8c8d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
-        /* User List (Admin) */
         .admin-user-list { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #eee; background: #fafafa; }
-        .admin-del-btn { background: #dc3545; color: white; border: none; padding: 6px 12px; border-radius: 5px; cursor: pointer; font-size: 12px; }
+        .settings-body { padding: 25px 20px; overflow-y: auto; flex: 1; }
 
         /* Chat Screen */
-        .chat-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 15px; background: #1f4e79; color: white; z-index: 10; position: relative; }
-        .delete-header { display: none; background: #1f4e79; color: white; padding: 15px; justify-content: space-between; align-items: center; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; }
-        
-        .chat-user-info { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-        .chat-user-info img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid white; }
-        .chat-user-text h3 { font-size: 16px; margin: 0; }
-        .chat-user-text p { font-size: 11px; margin: 0; opacity: 0.8; transition: 0.3s; }
-        .header-icons { display: flex; gap: 18px; font-size: 18px; }
-        .header-icons i { cursor: pointer; }
+        .chat-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .chat-user-info { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .chat-user-info img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.5); background: white; }
+        .chat-user-text h3 { font-size: 17px; margin: 0; font-weight: 600; }
+        .chat-user-text p { font-size: 12px; margin: 0; opacity: 0.9; }
+        .header-icons { display: flex; gap: 20px; font-size: 20px; }
+        .delete-header { display: none; background: #ff4b2b; color: white; padding: 15px; justify-content: space-between; align-items: center; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; }
 
-        .chat-body { flex: 1; background: #e5ddd5; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; background-image: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png'); background-size: cover; position: relative; }
+        /* Chat Body & ACS Branding */
+        .chat-body { flex: 1; background-color: #e5ddd5; overflow-y: auto; padding: 15px; display: flex; flex-direction: column; position: relative; }
+        .chat-watermark { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); opacity: 0.08; text-align: center; pointer-events: none; }
+        .chat-watermark img { width: 180px; border-radius: 50%; filter: grayscale(100%); margin-bottom: 10px; }
+        .chat-watermark h1 { font-size: 40px; color: #000; margin: 0; letter-spacing: 2px; }
         
-        .message { max-width: 75%; padding: 8px 10px 22px 14px; margin: 6px 0; border-radius: 12px; font-size: 15px; position: relative; z-index: 5; box-shadow: 0 1px 2px rgba(0,0,0,0.1); line-height: 1.4; word-wrap: break-word; }
-        .received { background: #ffffff; align-self: flex-start; border-top-left-radius: 0; color: #333; }
-        .sent { background: #dcf8c6; align-self: flex-end; border-top-right-radius: 0; color: #333; }
-        .message.msg-selected { background: #add8e6; opacity: 0.9; border: 2px solid #1f4e79; }
-        .message img { max-width: 100%; border-radius: 10px; margin-top: 5px; }
-        audio { height: 40px; width: 220px; outline: none; margin-top: 5px; }
-        
-        .msg-info { position: absolute; bottom: 4px; right: 8px; font-size: 10px; color: #888; display: flex; align-items: center; gap: 4px; }
+        .message { max-width: 78%; padding: 10px 12px 22px 14px; margin: 4px 0; border-radius: 15px; font-size: 15px; position: relative; z-index: 5; box-shadow: 0 1px 2px rgba(0,0,0,0.15); line-height: 1.4; word-wrap: break-word; }
+        .received { background: #ffffff; align-self: flex-start; border-top-left-radius: 0; color: #2c3e50; }
+        .sent { background: linear-gradient(135deg, #dcf8c6 0%, #c1f0a3 100%); align-self: flex-end; border-top-right-radius: 0; color: #1e3c23; }
+        .message.msg-selected { background: #add8e6; opacity: 0.9; border: 2px solid #667eea; }
+        .msg-info { position: absolute; bottom: 4px; right: 8px; font-size: 10px; color: #888; display: flex; align-items: center; gap: 4px; font-weight: 600; }
+        .sent .msg-info { color: #558b2f; }
         .blue-tick { color: #34b7f1; font-size: 12px; }
+        .message img { max-width: 100%; border-radius: 10px; margin-top: 5px; }
 
-        .chat-footer { background: #ffffff; padding: 10px 15px; padding-bottom: calc(20px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 12px; z-index: 10; border-top: 1px solid #ccc; }
-        .chat-footer i { font-size: 24px; color: #888; cursor: pointer; }
-        .chat-input-wrapper { flex: 1; background: #f0f2f5; border-radius: 25px; display: flex; align-items: center; padding: 5px 15px; }
+        /* Footer with working Camera Icon */
+        .chat-footer { background: #ffffff; padding: 10px 15px; padding-bottom: calc(15px + env(safe-area-inset-bottom)); display: flex; align-items: center; gap: 12px; z-index: 10; box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+        .chat-footer i { font-size: 24px; color: #7f8c8d; cursor: pointer; transition: 0.2s; }
+        .chat-input-wrapper { flex: 1; background: #f0f2f5; border-radius: 25px; display: flex; align-items: center; padding: 5px 15px; border: 1px solid #e0e0e0; }
         .chat-input-wrapper input { border: none; background: transparent; width: 100%; padding: 10px 0; outline: none; font-size: 15px; }
-        
-        .send-btn { background: #128C7E; color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; border: none; cursor: pointer; flex-shrink: 0; font-size: 18px; }
-        .recording { background: #dc3545; transform: scale(1.1); animation: pulse 1s infinite; }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(220, 53, 69, 0); } 100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); } }
+        .send-btn { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; border: none; cursor: pointer; flex-shrink: 0; font-size: 18px; }
 
-        /* Call Screen */
-        #call-screen { background: #1f4e79; color: white; justify-content: space-between; align-items: center; padding: 50px 20px; }
-        .call-info { text-align: center; margin-top: 50px; }
-        .call-info img { width: 130px; height: 130px; border-radius: 50%; margin-bottom: 20px; border: 3px solid rgba(255,255,255,0.3); object-fit: cover; }
-        .call-info h2 { font-size: 28px; margin-bottom: 10px; }
-        .call-info p { font-size: 16px; opacity: 0.8; }
-        .call-actions { display: flex; gap: 30px; margin-bottom: 40px; }
-        .call-btn { width: 60px; height: 60px; border-radius: 50%; border: none; font-size: 24px; color: white; background: rgba(255,255,255,0.2); cursor: pointer; display: flex; justify-content: center; align-items: center; }
-        .call-btn.end { background: #dc3545; transform: scale(1.1); }
-        .call-btn.active { background: white; color: #1f4e79; }
+        /* Realtime Call UI */
+        .incoming-call-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 2000; flex-direction: column; justify-content: center; align-items: center; color: white; }
+        .incoming-call-modal img { width: 120px; height: 120px; border-radius: 50%; border: 3px solid #38ef7d; margin-bottom: 20px; animation: pulseCall 1.5s infinite; object-fit: cover;}
+        @keyframes pulseCall { 0% { box-shadow: 0 0 0 0 rgba(56, 239, 125, 0.7); } 70% { box-shadow: 0 0 0 20px rgba(56, 239, 125, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 239, 125, 0); } }
+        .call-action-btns { display: flex; gap: 40px; margin-top: 50px; }
+        .btn-call-accept { background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; color: white; border: none; cursor: pointer; }
+        .btn-call-reject { background: #ff4b2b; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; color: white; border: none; cursor: pointer; }
 
         .modal-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .delete-box { background: white; padding: 20px; border-radius: 15px; width: 80%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
-        .delete-box h3 { margin-bottom: 15px; font-size: 18px; color: #333; }
         .delete-box p { padding: 12px; margin: 10px 0; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 15px; }
         .del-everyone { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .del-me { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
-        .del-cancel { color: #1f4e79; margin-top: 15px !important; display: block; }
 
-        #toast { display: none; position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); color: white; padding: 12px 24px; border-radius: 25px; font-size: 14px; z-index: 1000; }
+        #toast { display: none; position: absolute; bottom: 120px; left: 50%; transform: translateX(-50%); background: #2c3e50; color: white; padding: 12px 24px; border-radius: 25px; font-size: 14px; font-weight: bold; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
+<audio id="audio-ringtone" loop><source src="https://www.soundjay.com/phone/sounds/telephone-ring-04.mp3" type="audio/mpeg"></audio>
+<audio id="audio-connected"><source src="https://www.soundjay.com/button/sounds/button-09.mp3" type="audio/mpeg"></audio>
+
+<div id="incoming-call-screen" class="incoming-call-modal">
+    <h2 style="margin-bottom: 5px; color:#38ef7d;">Incoming Call</h2>
+    <p id="caller-name" style="margin-bottom: 30px; font-size:18px;">Someone</p>
+    <img src="https://via.placeholder.com/150" id="caller-dp">
+    <p id="call-timer" style="font-size: 24px; font-weight: bold; margin-top: 20px; display: none;">00:00</p>
+    <div class="call-action-btns" id="call-controls">
+        <button class="btn-call-reject" onclick="window.rejectCall()"><i class="fas fa-phone-slash"></i></button>
+        <button class="btn-call-accept" onclick="window.acceptCall()" id="btn-accept-call"><i class="fas fa-phone"></i></button>
+    </div>
+</div>
+
 <div class="app-container">
 
     <div id="auth-screen" class="screen active">
-        <div class="auth-logo">ACS <span>chat</span></div>
+        <div class="auth-logo"><img src="https://i.ibb.co/hFRHRQ97" alt="ACS"></div>
         <div class="handled-by">Handled by Adarsh Chandravanshi</div>
         
         <div class="tabs">
@@ -142,14 +149,13 @@
 
         <div id="form-register" class="form-container active-form">
             <div class="profile-pic-upload" onclick="document.getElementById('reg-dp-input').click()">
-                <img src="image.png" id="reg-dp-preview" onerror="this.src='https://via.placeholder.com/80'" alt="Upload DP">
+                <img src="https://via.placeholder.com/150/fdfbfb/667eea?text=Photo" id="reg-dp-preview">
                 <i class="fas fa-camera"></i>
                 <input type="file" id="reg-dp-input" accept="image/*" style="display: none;" onchange="window.previewDP(event, 'reg-dp-preview')">
             </div>
             <input type="text" class="input-box" id="reg-name" placeholder="Full Name">
             <div class="input-group">
-                <input type="text" class="input-box" id="reg-user" placeholder="Unique Username" oninput="window.checkUsername()" style="margin-bottom:0;">
-                <span id="user-indicator" class="status-icon"></span>
+                <input type="text" class="input-box" id="reg-user" placeholder="Unique Username" style="margin-bottom:0;">
             </div>
             <input type="password" class="input-box" id="reg-pass" placeholder="Password (Max 6 Chars)" maxlength="6">
             <div class="security-box">
@@ -159,56 +165,55 @@
                     <option value="Favorite Color?">Favorite Color?</option>
                     <option value="First Pet Name?">First Pet Name?</option>
                 </select>
-                <input type="text" class="input-box" id="reg-ans" placeholder="Secret Answer" style="margin-bottom:0;">
+                <input type="text" class="input-box" id="reg-ans" placeholder="Secret Answer" style="margin-bottom:0; border:none; border-bottom: 2px solid #ddd; border-radius: 0; padding-left: 5px;">
             </div>
-            <button class="btn" onclick="window.registerUser()">Create & Login</button>
+            <button class="btn-gradient" onclick="window.registerUser()">Create & Login</button>
         </div>
 
         <div id="form-login" class="form-container">
             <input type="text" class="input-box" id="login-user" placeholder="Username">
             <input type="password" class="input-box" id="login-pass" placeholder="Password (Max 6)" maxlength="6">
-            <button class="btn" onclick="window.loginUser()">Login</button>
+            <button class="btn-gradient" onclick="window.loginUser()">Login</button>
             <p class="link-text" onclick="window.showScreen('forgot-screen')">Forgot Password?</p>
         </div>
 
         <div id="form-premium" class="form-container">
             <div style="text-align:center; margin-bottom: 20px;">
-                <img src="https://i.ibb.co/hFRHRQ97" onerror="this.src='image.png'" style="width:70px; height:70px; border-radius:50%; margin-bottom:10px; object-fit:cover;">
-                <h3>Premium VIP</h3>
+                <img src="https://i.ibb.co/hFRHRQ97" style="width:80px; height:80px; border-radius:50%; margin-bottom:10px; object-fit:cover; border:3px solid #f2994a;">
+                <h3 style="color:#f2994a;">Premium VIP</h3>
             </div>
             <input type="password" class="input-box" id="premium-pass" placeholder="Enter Premium PIN" maxlength="6">
-            <button class="btn btn-premium" onclick="window.premiumLogin()">Login Premium</button>
+            <button class="btn-gradient btn-premium" onclick="window.premiumLogin()">Login Premium</button>
         </div>
     </div>
 
     <div id="forgot-screen" class="screen">
-        <div class="auth-logo">Recover <span>Account</span></div>
+        <div class="auth-logo"><img src="https://i.ibb.co/hFRHRQ97"></div>
         <div class="form-container active-form">
             <input type="text" class="input-box" id="for-user" placeholder="Enter Username">
-            <button class="btn" onclick="window.checkSecurity()">Find User</button>
+            <button class="btn-gradient" onclick="window.checkSecurity()">Find User</button>
             <div id="sec-area" style="display:none; margin-top:15px;">
-                <p style="text-align: center; margin: 10px; font-weight: bold; color: #1f4e79;" id="sec-q"></p>
+                <p style="text-align: center; margin: 10px; font-weight: bold; color: #764ba2;" id="sec-q"></p>
                 <input type="text" class="input-box" id="for-ans" placeholder="Your Answer">
                 <input type="password" class="input-box" id="for-new-pass" placeholder="New Password (Max 6)" maxlength="6">
-                <button class="btn" onclick="window.resetPassword()">Reset Password</button>
+                <button class="btn-gradient btn-premium" onclick="window.resetPassword()">Reset Password</button>
             </div>
             <p class="link-text" onclick="window.showScreen('auth-screen')">Back to Login</p>
-            <button class="btn btn-success" onclick="window.open('https://wa.me/918252900810', '_blank')"><i class="fab fa-whatsapp"></i> Contact Us</button>
         </div>
     </div>
 
     <div id="home-screen" class="screen">
-        <div class="home-header">
+        <div class="home-header gradient-bg">
             <div class="home-top">
                 <div class="home-logo-area">
-                    <img src="https://i.ibb.co/hFRHRQ97" onerror="this.src='image.png'" alt="Logo">
+                    <img src="https://i.ibb.co/hFRHRQ97" style="width:40px; height:40px; border-radius:50%; border:2px solid white;">
                     <h2>ACS Chat</h2>
                 </div>
-                <div class="profile-icon" onclick="window.logout()">
-                    <img src="image.png" onerror="this.src='https://via.placeholder.com/45'" id="home-my-dp">
+                <div class="profile-icon" onclick="window.openProfileSettings()">
+                    <img src="" onerror="this.src='https://via.placeholder.com/150/667eea/ffffff?text=Me'" id="home-my-dp">
                 </div>
             </div>
-            <div class="handled-by" style="text-align: left; margin: 10px 0 0 0; font-size: 12px;">Handled by Adarsh Chandravanshi</div>
+            <div class="handled-by" style="text-align: left; margin: 10px 0 0 0; font-size: 12px; color:rgba(255,255,255,0.8);">Handled by Adarsh Chandravanshi</div>
         </div>
         <div class="search-container">
             <div class="search-box">
@@ -216,58 +221,54 @@
                 <input type="text" id="search-input" placeholder="Search user..." oninput="window.filterUsers()">
             </div>
         </div>
-        <div class="chat-list" id="chat-list-container">
-            <div style="text-align:center; padding: 20px; color:#888;">Connecting to Firebase Server...</div>
-        </div>
+        <div class="chat-list" id="chat-list-container"></div>
     </div>
 
-    <div id="call-screen" class="screen">
-        <div class="call-info">
-            <img src="image.png" onerror="this.src='https://via.placeholder.com/130'" id="call-user-dp">
-            <h2 id="call-user-name">User Name</h2>
-            <p>Ringing...</p>
+    <div id="profile-settings-screen" class="screen">
+        <div class="home-header gradient-bg" style="flex-direction:row; align-items:center; gap:15px;">
+            <i class="fas fa-arrow-left" onclick="window.loadHome()" style="cursor: pointer; font-size: 18px;"></i>
+            <span style="font-size:18px; font-weight:bold;">Profile Settings</span>
         </div>
-        <div class="call-actions">
-            <button class="call-btn" id="btn-mute" onclick="this.classList.toggle('active')"><i class="fas fa-microphone-slash"></i></button>
-            <button class="call-btn end" onclick="window.endCall()"><i class="fas fa-phone-slash"></i></button>
-            <button class="call-btn" id="btn-speaker" onclick="this.classList.toggle('active')"><i class="fas fa-volume-up"></i></button>
-        </div>
+        <div class="settings-body" id="settings-body-content"></div>
     </div>
 
     <div id="chat-screen" class="screen">
-        <div class="chat-header">
+        <div class="chat-header gradient-bg">
             <div class="chat-user-info" onclick="window.showScreen('home-screen')">
                 <i class="fas fa-arrow-left" style="font-size: 18px; margin-right: 5px;"></i>
-                <img src="image.png" onerror="this.src='https://via.placeholder.com/40'" id="chat-dp">
+                <img src="" id="chat-dp">
                 <div class="chat-user-text">
                     <h3 id="chat-user-name">User</h3>
                     <p id="chat-status-text">Online</p>
                 </div>
             </div>
             <div class="header-icons">
-                <i class="fas fa-phone-alt" onclick="window.startCall()"></i>
+                <i class="fas fa-phone-alt" onclick="window.initiateCall()"></i>
             </div>
             <div class="delete-header" id="delete-header">
                 <div style="display:flex; align-items:center; gap:15px;">
                     <i class="fas fa-arrow-left" onclick="window.cancelDelete()"></i>
                     <span id="del-count" style="font-weight:bold;">1 Selected</span>
                 </div>
-                <i class="fas fa-trash-alt" onclick="window.openDeleteModal()"></i>
+                <i class="fas fa-trash-alt" onclick="window.openDeleteModal()" style="font-size:20px; cursor:pointer;"></i>
             </div>
         </div>
         
-        <div class="chat-body" id="chat-box"></div>
+        <div class="chat-body" id="chat-box">
+            <div class="chat-watermark">
+                <img src="https://i.ibb.co/hFRHRQ97"><br>
+                <h1>ACS Chat</h1>
+            </div>
+            </div>
 
         <div class="chat-footer">
             <div class="chat-input-wrapper">
-                <input type="text" id="msg-input" placeholder="Type a message" oninput="window.toggleMicSend()">
-                <i class="fas fa-camera" style="margin-left:10px; font-size:18px;" onclick="document.getElementById('chat-img-upload').click()"></i>
+                <input type="text" id="msg-input" placeholder="Message..." oninput="window.toggleMicSend()">
+                <i class="fas fa-camera" style="margin-left:10px; font-size:18px; color:#11998e;" onclick="document.getElementById('chat-img-upload').click()"></i>
                 <input type="file" id="chat-img-upload" accept="image/*" style="display:none;" onchange="window.sendImageMsg(event)">
             </div>
-            <button class="send-btn" id="send-btn-icon" 
-                    onmousedown="window.startRealRecord(event)" onmouseup="window.stopRealRecord(event)" onmouseleave="window.stopRealRecord(event)"
-                    ontouchstart="window.startRealRecord(event)" ontouchend="window.stopRealRecord(event)">
-                <i class="fas fa-microphone"></i>
+            <button class="send-btn" id="send-btn-icon" onclick="window.handleSendTextAction()">
+                <i class="fas fa-paper-plane"></i>
             </button>
         </div>
     </div>
@@ -277,7 +278,7 @@
             <h3>Delete Messages?</h3>
             <p class="del-everyone" onclick="window.executeDelete('everyone')"><i class="fas fa-trash-alt"></i> Delete for everyone</p>
             <p class="del-me" onclick="window.executeDelete('me')"><i class="fas fa-user-times"></i> Delete for me</p>
-            <span class="del-cancel" onclick="window.closeDeleteModal()">Cancel</span>
+            <span style="color: #667eea; font-weight:bold; margin-top: 15px; display:block; cursor:pointer;" onclick="window.closeDeleteModal()">Cancel</span>
         </div>
     </div>
     
@@ -289,7 +290,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
     import { getDatabase, ref, set, get, onValue, push, remove, child } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-    // Aapka apna Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCD88ZYx46bkgAPM2g5aC7iTyBxVuOsGzg",
       authDomain: "acs-chat-b36aa.firebaseapp.com",
@@ -303,20 +303,19 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Global App State
     window.allUsers = {};
-    window.currentChatMessages = [];
     window.currentUser = localStorage.getItem('acs_currentUser') || null;
     window.activeChatUser = null;
     let tempDPBase64 = null;
     let activeChatUnsubscribe = null;
+    let callListener = null;
 
-    // ----- UI HELPERS -----
+    // --- UTILS ---
     window.showScreen = function(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
         tempDPBase64 = null; 
-        window.cancelDelete();
+        if(window.cancelDelete) window.cancelDelete();
     }
     window.switchAuthTab = function(tab) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active-tab'));
@@ -331,79 +330,25 @@
         setTimeout(() => toast.style.display = 'none', 2000);
     }
     function getCurrentTime() { return new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}); }
-    
-    // Privacy Logic: Creates a unique isolated chat room ID for any 2 users
-    function getChatId(u1, u2) {
-        return [u1, u2].sort().join('_'); 
-    }
+    function getChatId(u1, u2) { return [u1, u2].sort().join('_'); }
 
-    // Call Screen
-    window.startCall = function() {
-        document.getElementById('call-user-dp').src = document.getElementById('chat-dp').src;
-        document.getElementById('call-user-name').innerText = document.getElementById('chat-user-name').innerText;
-        window.showScreen('call-screen');
-    }
-    window.endCall = function() { window.showScreen('chat-screen'); }
-
-    // Audio & Image
-    let mediaRecorder;
-    let audioChunks = [];
-    let isRecordingAudio = false;
-
-    window.startRealRecord = async function(e) {
-        if(document.getElementById('msg-input').value.trim().length > 0) return;
-        if(e) { e.preventDefault(); e.stopPropagation(); }
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
-            audioChunks = [];
-            mediaRecorder.ondataavailable = event => { audioChunks.push(event.data); };
-            mediaRecorder.onstop = () => {
-                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                const reader = new FileReader();
-                reader.readAsDataURL(audioBlob);
-                reader.onloadend = function() { window.saveMessage(reader.result, 'audio'); }
-            };
-            mediaRecorder.start();
-            isRecordingAudio = true;
-            document.getElementById('send-btn-icon').classList.add('recording');
-        } catch(err) { window.showToast("Mic permission denied!"); }
-    }
-
-    window.stopRealRecord = function(e) {
-        if(e) { e.preventDefault(); e.stopPropagation(); }
-        if(isRecordingAudio && mediaRecorder && mediaRecorder.state === "recording") {
-            mediaRecorder.stop();
-            isRecordingAudio = false;
-            document.getElementById('send-btn-icon').classList.remove('recording');
-        }
-    }
-
-    window.sendImageMsg = function(event) {
-        const file = event.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) { window.saveMessage(e.target.result, 'image'); }
-            reader.readAsDataURL(file);
-        }
-    }
-
-    // ----- INITIALIZATION -----
+    // --- INITIALIZE ---
     window.onload = () => {
-        // Global listener for users node
         onValue(ref(db, 'users'), (snapshot) => {
             window.allUsers = snapshot.val() || {};
-            if(window.currentUser) {
-                if(!document.getElementById('home-screen').classList.contains('active') && !document.getElementById('chat-screen').classList.contains('active')) {
-                    window.loadHome();
-                } else if(document.getElementById('home-screen').classList.contains('active')) {
-                    window.renderChatList();
-                }
+            if(window.currentUser && document.getElementById('home-screen').classList.contains('active')) {
+                window.renderChatList();
             }
         });
+
+        if (window.currentUser) {
+            window.loadHome();
+            window.listenForIncomingCalls();
+        } else {
+            window.showScreen('auth-screen');
+        }
     };
 
-    // ----- AUTHENTICATION -----
     window.previewDP = function(event, previewElementId) {
         const file = event.target.files[0];
         if (file) {
@@ -416,45 +361,36 @@
         }
     }
 
-    window.checkUsername = function() {
-        const val = document.getElementById('reg-user').value.toLowerCase().trim();
-        const indicator = document.getElementById('user-indicator');
-        if (val.length === 0) { indicator.innerHTML = ''; return; }
-        if (window.allUsers[val] || val === 'vip' || val === 'premium vip') {
-            indicator.innerHTML = '❌'; indicator.style.color = '#dc3545';
-        } else {
-            indicator.innerHTML = '✅'; indicator.style.color = '#25D366';
-        }
-    }
-
+    // --- AUTHENTICATION ---
     window.registerUser = async function() {
         const name = document.getElementById('reg-name').value;
         const user = document.getElementById('reg-user').value.toLowerCase().trim();
         const pass = document.getElementById('reg-pass').value;
         const sq = document.getElementById('reg-sq').value;
         const ans = document.getElementById('reg-ans').value.toLowerCase();
-        const dp = tempDPBase64 || "image.png";
+        const dp = tempDPBase64 || "https://i.ibb.co/hFRHRQ97"; // ACS Default
 
-        if(!name || !user || !pass || !ans) return alert("Fill all details!");
-        if(window.allUsers[user] || user === 'vip') return alert("Username already taken!");
+        if(!name || !user || !pass || !ans) return window.showToast("Please fill all details!");
+        if(window.allUsers[user] || user === 'vip') return window.showToast("Username taken!");
 
         await set(ref(db, 'users/' + user), { name, pass, dp, sq, ans });
-        
         window.currentUser = user;
         localStorage.setItem('acs_currentUser', user);
         window.loadHome();
+        window.listenForIncomingCalls();
     }
 
     window.loginUser = async function() {
         const user = document.getElementById('login-user').value.toLowerCase().trim();
         const pass = document.getElementById('login-pass').value;
-
-        const snapshot = await get(child(ref(db), `users/${user}`));
-        if (snapshot.exists() && snapshot.val().pass === pass) {
+        const snap = await get(child(ref(db), `users/${user}`));
+        
+        if (snap.exists() && snap.val().pass === pass) {
             window.currentUser = user;
             localStorage.setItem('acs_currentUser', user);
             window.loadHome();
-        } else { alert("Wrong Username or Password"); }
+            window.listenForIncomingCalls();
+        } else { window.showToast("Wrong Username/Password!"); }
     }
 
     window.premiumLogin = function() {
@@ -463,11 +399,12 @@
             window.currentUser = 'Premium VIP';
             localStorage.setItem('acs_currentUser', window.currentUser);
             window.loadHome();
-        } else { alert("Invalid Premium PIN!"); }
+        } else { window.showToast("Invalid Admin PIN!"); }
     }
 
     window.logout = function() {
         if(confirm("Logout from ACS Chat?")) {
+            if(callListener) callListener();
             window.currentUser = null;
             localStorage.removeItem('acs_currentUser');
             if(activeChatUnsubscribe) activeChatUnsubscribe();
@@ -475,34 +412,75 @@
         }
     }
 
-    window.checkSecurity = async function() {
-        const user = document.getElementById('for-user').value.toLowerCase().trim();
-        const snapshot = await get(child(ref(db), `users/${user}`));
-        if(snapshot.exists()) {
-            document.getElementById('sec-q').innerText = snapshot.val().sq;
-            document.getElementById('sec-area').style.display = 'block';
-        } else { alert("User not found!"); }
+    // --- PROFILE SETTINGS FULL FIX ---
+    window.openProfileSettings = function() {
+        const body = document.getElementById('settings-body-content');
+        if(window.currentUser === 'Premium VIP') {
+            body.innerHTML = `
+                <div style="text-align:center; margin-top:30px;">
+                    <img src="https://i.ibb.co/hFRHRQ97" style="width:100px; height:100px; border-radius:50%; border:4px solid #f2994a; margin-bottom:20px; object-fit:cover;">
+                    <h2 style="color:#764ba2;">Premium Admin</h2>
+                    <p style="color:#888; margin-bottom:40px;">Full Database Access Granted</p>
+                    <button class="btn-gradient btn-danger" onclick="window.logout()">Logout Admin</button>
+                </div>
+            `;
+        } else {
+            let uData = window.allUsers[window.currentUser] || {};
+            let currentDP = uData.dp || "https://i.ibb.co/hFRHRQ97";
+            body.innerHTML = `
+                <div class="profile-pic-upload" onclick="document.getElementById('edit-dp-input').click()">
+                    <img src="${currentDP}" id="edit-dp-preview">
+                    <i class="fas fa-camera"></i>
+                    <input type="file" id="edit-dp-input" accept="image/*" style="display: none;" onchange="window.previewDP(event, 'edit-dp-preview')">
+                </div>
+                <div style="text-align:center; color:#888; font-size:12px; margin-bottom:20px;">Username: @${window.currentUser}</div>
+                
+                <label style="font-size:12px; font-weight:bold; color:#667eea; margin-left:15px;">Edit Full Name:</label>
+                <input type="text" class="input-box" id="edit-name" value="${uData.name || ''}" placeholder="Full Name">
+                
+                <label style="font-size:12px; font-weight:bold; color:#667eea; margin-left:15px;">Edit Password:</label>
+                <input type="text" class="input-box" id="edit-pass" value="${uData.pass || ''}" placeholder="New Password" maxlength="6">
+                
+                <div class="security-box">
+                    <div class="security-title">Update Security Info</div>
+                    <select id="edit-sq" class="sec-select">
+                        <option value="Birth Place?" ${uData.sq=='Birth Place?'?'selected':''}>Birth Place?</option>
+                        <option value="Favorite Color?" ${uData.sq=='Favorite Color?'?'selected':''}>Favorite Color?</option>
+                        <option value="First Pet Name?" ${uData.sq=='First Pet Name?'?'selected':''}>First Pet Name?</option>
+                    </select>
+                    <input type="text" class="input-box" id="edit-ans" value="${uData.ans || ''}" placeholder="Secret Answer" style="margin-bottom:0; border:none; border-bottom: 2px solid #ddd; border-radius: 0; padding-left: 5px;">
+                </div>
+
+                <button class="btn-gradient" onclick="window.saveProfileSettings()">Save All Changes</button>
+                <button class="btn-gradient btn-danger" style="margin-top:20px;" onclick="window.logout()">Logout</button>
+            `;
+        }
+        window.showScreen('profile-settings-screen');
     }
 
-    window.resetPassword = async function() {
-        const user = document.getElementById('for-user').value.toLowerCase().trim();
-        const ans = document.getElementById('for-ans').value.toLowerCase();
-        const newPass = document.getElementById('for-new-pass').value;
+    window.saveProfileSettings = async function() {
+        const name = document.getElementById('edit-name').value;
+        const pass = document.getElementById('edit-pass').value;
+        const sq = document.getElementById('edit-sq').value;
+        const ans = document.getElementById('edit-ans').value;
+        const dp = tempDPBase64 || window.allUsers[window.currentUser].dp;
 
-        const snapshot = await get(child(ref(db), `users/${user}`));
-        if(snapshot.exists() && snapshot.val().ans === ans) {
-            await set(ref(db, `users/${user}/pass`), newPass);
-            alert("Password Reset Successful! You can login now.");
-            window.showScreen('auth-screen');
-        } else { alert("Wrong Secret Answer!"); }
+        if(!name || !pass || !ans) return window.showToast("Fields cannot be empty!");
+        
+        await set(ref(db, `users/${window.currentUser}`), { name, pass, dp, sq, ans });
+        window.showToast("Profile Updated Successfully!");
+        window.loadHome();
     }
 
-    // ----- HOME SCREEN -----
+    // --- HOME ---
     window.loadHome = function() {
         window.showScreen('home-screen');
-        let myDP = (window.allUsers[window.currentUser] && window.allUsers[window.currentUser].dp) ? window.allUsers[window.currentUser].dp : "image.png";
-        if(window.currentUser === 'Premium VIP') myDP = "https://i.ibb.co/hFRHRQ97";
-        document.getElementById('home-my-dp').src = myDP;
+        if(window.currentUser === 'Premium VIP') {
+            document.getElementById('home-my-dp').src = "https://i.ibb.co/hFRHRQ97";
+        } else {
+            let uData = window.allUsers[window.currentUser] || {};
+            document.getElementById('home-my-dp').src = uData.dp || "https://i.ibb.co/hFRHRQ97";
+        }
         window.renderChatList();
     }
 
@@ -510,18 +488,11 @@
         let val = document.getElementById('search-input').value.toLowerCase();
         let items = document.querySelectorAll('.chat-item, .admin-user-list');
         items.forEach(item => {
-            let nameElem = item.querySelector('.chat-name') || item.querySelector('strong');
+            let nameElem = item.querySelector('.chat-name');
             let name = nameElem ? nameElem.innerText.toLowerCase() : "";
             if(name.includes(val)) item.style.display = 'flex';
             else item.style.display = 'none';
         });
-    }
-
-    window.deleteScammer = async function(u) {
-        if(confirm(`Are you sure you want to ban/delete ${u}?`)) {
-            await remove(ref(db, 'users/' + u));
-            alert("User deleted permanently.");
-        }
     }
 
     window.renderChatList = function() {
@@ -530,151 +501,220 @@
         
         // Admin View
         if(window.currentUser === 'Premium VIP') {
-            container.innerHTML += `<div style="padding:10px 20px; background:#1f4e79; color:white; font-weight:bold;">User List (Admin Mode)</div>`;
+            container.innerHTML += `<div style="padding:10px 20px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; font-weight:bold;">All Database Users</div>`;
             for(let u in window.allUsers) {
-                let dp = window.allUsers[u].dp || "image.png";
+                let dp = window.allUsers[u].dp || "https://i.ibb.co/hFRHRQ97";
                 container.innerHTML += `
-                    <div class="admin-user-list">
-                        <div style="display:flex; align-items:center; gap:10px;" onclick="window.openChat('${u}', '${window.allUsers[u].name}')">
-                            <img src="${dp}" onerror="this.src='image.png'" style="width:40px; height:40px; border-radius:50%; object-fit:cover;">
-                            <div>
-                                <strong>${window.allUsers[u].name}</strong>
-                                <p style="font-size:12px; color:#666;">ID: @${u} | Pass: ${window.allUsers[u].pass}</p>
-                            </div>
+                    <div class="chat-item admin-user-list" onclick="window.openChat('${u}', '${window.allUsers[u].name}')">
+                        <img src="${dp}">
+                        <div class="chat-details">
+                            <div class="chat-name-time"><span class="chat-name" style="color:#764ba2;">${window.allUsers[u].name}</span></div>
+                            <div class="chat-msg">@${u} | Pass: ${window.allUsers[u].pass}</div>
                         </div>
-                        <button class="admin-del-btn" onclick="window.deleteScammer('${u}')">Delete</button>
                     </div>`;
             }
             return;
         }
 
-        // Normal User View
-        container.innerHTML += createChatHTMLItem('vip', 'ACS Assistant', 'https://i.ibb.co/hFRHRQ97', 'Always ready to help! 🤖');
+        // Normal User
+        container.innerHTML += `
+            <div class="chat-item" onclick="window.openChat('vip', 'ACS Assistant')">
+                <img src="https://i.ibb.co/hFRHRQ97" style="border:2px solid #38ef7d;">
+                <div class="chat-details">
+                    <div class="chat-name-time"><span class="chat-name" style="color:#11998e;">ACS Assistant (AI)</span></div>
+                    <div class="chat-msg">Always ready to help! 🤖</div>
+                </div>
+            </div>`;
         
         for (let targetUser in window.allUsers) {
             if(targetUser === window.currentUser) continue;
             let displayName = window.allUsers[targetUser].name;
-            let dp = window.allUsers[targetUser].dp || "image.png";
-            container.innerHTML += createChatHTMLItem(targetUser, displayName, dp, "Tap to open online chat");
+            let dp = window.allUsers[targetUser].dp || "https://i.ibb.co/hFRHRQ97";
+            
+            container.innerHTML += `
+                <div class="chat-item" onclick="window.openChat('${targetUser}', '${displayName}')">
+                    <img src="${dp}">
+                    <div class="chat-details">
+                        <div class="chat-name-time"><span class="chat-name">${displayName}</span></div>
+                        <div class="chat-msg" style="color:#aaa;">Tap to chat</div>
+                    </div>
+                </div>`;
         }
     }
 
-    function createChatHTMLItem(tUser, dName, dp, lMsg) {
-        return `
-            <div class="chat-item" onclick="window.openChat('${tUser}', '${dName}')">
-                <img src="${dp}" onerror="this.src='image.png'">
-                <div class="chat-details">
-                    <div class="chat-name-time"><span class="chat-name">${dName}</span></div>
-                    <div class="chat-msg">${lMsg}</div>
-                </div>
-            </div>`;
-    }
-
-    // ----- CHAT SCREEN -----
+    // --- CHAT SYSTEM ---
     window.openChat = function(targetUser, displayName) {
         window.activeChatUser = targetUser;
         document.getElementById('chat-user-name').innerText = displayName;
-        document.getElementById('chat-status-text').innerText = (targetUser === 'vip') ? 'AI Bot (Always Online)' : 'Online';
+        document.getElementById('chat-status-text').innerText = (targetUser === 'vip') ? 'AI Assistant' : 'Online';
         
-        let targetDP = "image.png";
-        if(targetUser === 'vip' || targetUser === 'Premium VIP') targetDP = "https://i.ibb.co/hFRHRQ97";
-        else if (window.allUsers[targetUser] && window.allUsers[targetUser].dp) targetDP = window.allUsers[targetUser].dp;
+        let targetDP = "https://i.ibb.co/hFRHRQ97";
+        if (window.allUsers[targetUser] && window.allUsers[targetUser].dp) targetDP = window.allUsers[targetUser].dp;
         document.getElementById('chat-dp').src = targetDP;
 
         let activeChatId = getChatId(window.currentUser, targetUser);
         if(activeChatUnsubscribe) activeChatUnsubscribe();
 
         activeChatUnsubscribe = onValue(ref(db, 'chats/' + activeChatId), (snapshot) => {
-            window.currentChatMessages = [];
+            const box = document.getElementById('chat-box');
+            // Keep watermark
+            box.innerHTML = `<div class="chat-watermark"><img src="https://i.ibb.co/hFRHRQ97"><br><h1>ACS Chat</h1></div>`;
+            
+            if(window.activeChatUser === 'vip' && !snapshot.exists()) {
+                box.innerHTML += `<div class="message received">Namaste Adarsh Bhai! Main ACS Assistant hoon. Boliye kya help karu?<div class="msg-info">${getCurrentTime()}</div></div>`;
+            }
+
             snapshot.forEach(childSnap => {
-                let msgData = childSnap.val();
-                // "Delete for me" Logic check
-                if(!msgData.deletedFor || !msgData.deletedFor.includes(window.currentUser)) {
-                    window.currentChatMessages.push({ id: childSnap.key, ...msgData });
-                }
+                let msg = childSnap.val();
+                if(msg.deletedFor && msg.deletedFor.includes(window.currentUser)) return;
+
+                let alignClass = msg.from === window.currentUser ? 'sent' : 'received';
+                let tickHTML = msg.from === window.currentUser ? `<i class="fas fa-check-double blue-tick"></i>` : '';
+                let contentHTML = msg.type === 'image' ? `<img src="${msg.text}">` : msg.text;
+
+                box.innerHTML += `<div class="message ${alignClass}" id="msg-${childSnap.key}"
+                    onmousedown="window.handleTouchStart('${childSnap.key}')" onmouseup="window.handleTouchEnd()" 
+                    ontouchstart="window.handleTouchStart('${childSnap.key}')" ontouchend="window.handleTouchEnd()"
+                    onclick="window.handleMsgClick('${childSnap.key}')">
+                    ${contentHTML}
+                    <div class="msg-info">${msg.time} ${tickHTML}</div>
+                </div>`;
             });
-            window.renderMessages();
+            box.scrollTop = box.scrollHeight;
         });
 
         window.showScreen('chat-screen');
     }
 
-    window.renderMessages = function() {
-        const box = document.getElementById('chat-box');
-        box.innerHTML = '';
-
-        if(window.activeChatUser === 'vip' && window.currentChatMessages.length === 0) {
-            box.innerHTML += `<div class="message received">Hello Adarsh! Main ACS Assistant hoon. Kahiye?<div class="msg-info">${getCurrentTime()}</div></div>`;
-        }
-
-        window.currentChatMessages.forEach(msg => {
-            let alignClass = msg.from === window.currentUser ? 'sent' : 'received';
-            let tickHTML = msg.from === window.currentUser ? `<i class="fas fa-check-double blue-tick"></i>` : '';
-            
-            let contentHTML = msg.text;
-            if(msg.type === 'image') contentHTML = `<img src="${msg.text}">`;
-            else if(msg.type === 'audio') contentHTML = `<audio controls src="${msg.text}"></audio>`;
-
-            box.innerHTML += `<div class="message ${alignClass}" id="msg-${msg.id}" 
-                onmousedown="window.handleTouchStart('${msg.id}')" onmouseup="window.handleTouchEnd()" 
-                ontouchstart="window.handleTouchStart('${msg.id}')" ontouchend="window.handleTouchEnd()"
-                onclick="window.handleMsgClick('${msg.id}')">
-                ${contentHTML}
-                <div class="msg-info">${msg.time} ${tickHTML}</div>
-            </div>`;
-        });
-        box.scrollTop = box.scrollHeight;
+    // --- SMART ACS AI LOGIC ---
+    function getSmartReply(text) {
+        let t = text.toLowerCase();
+        if(t.includes('hi') || t.includes('hello') || t.includes('hey')) return "Hello! Main ACS Assistant hoon, boliye kaise madad karu?";
+        if(t.includes('kaise ho') || t.includes('kya haal')) return "Main ekdum badhiya hoon! Ek machine kabhi thakti nahi. Aap sunaiye?";
+        if(t.includes('password') || t.includes('bhul gaya')) return "Agar password bhul gaye hain toh login screen par 'Forgot Password' daba kar Security Question ka answer de.";
+        if(t.includes('acs') || t.includes('adarsh') || t.includes('owner')) return "Adarsh Kumar Chandravanshi ji (ACS) ne mujhe banaya hai. Unka number 8252900810 hai.";
+        if(t.includes('call') || t.includes('baat karna')) return "Aap upar Call (phone icon) par click karke real-time notification bhej sakte hain!";
+        return "Ye baat mujhe poori samajh nahi aayi. Kuch aur tareeke se bataiye?";
     }
 
-    // ----- SENDING MESSAGES -----
     window.toggleMicSend = function() {
         const input = document.getElementById('msg-input').value;
         const btn = document.getElementById('send-btn-icon');
-        if(input.trim().length > 0) {
-            btn.innerHTML = '<i class="fas fa-paper-plane"></i>';
-            btn.onclick = window.handleSendTextAction;
-            btn.onmousedown = null; btn.ontouchstart = null;
-        } else {
-            btn.innerHTML = '<i class="fas fa-microphone"></i>';
-            btn.onclick = null;
-            btn.onmousedown = window.startRealRecord; btn.ontouchstart = window.startRealRecord;
-        }
+        btn.innerHTML = '<i class="fas fa-paper-plane"></i>';
     }
 
     window.handleSendTextAction = async function() {
         const input = document.getElementById('msg-input');
         const text = input.value.trim();
         if (text !== '') {
-            await window.saveMessage(text, 'text');
+            let activeChatId = getChatId(window.currentUser, window.activeChatUser);
+            await push(ref(db, 'chats/' + activeChatId), {
+                from: window.currentUser, text: text, type: 'text', time: getCurrentTime()
+            });
             input.value = '';
-            window.toggleMicSend();
             
+            // SMART AI BOT
             if(window.activeChatUser === 'vip') {
-                document.getElementById('chat-status-text').innerText = 'ACS Assistant is typing...';
+                document.getElementById('chat-status-text').innerText = 'typing...';
                 setTimeout(() => {
-                    let activeChatId = getChatId(window.currentUser, 'vip');
-                    push(ref(db, 'chats/' + activeChatId), { from: 'vip', text: "Main abhi online server se connected hoon!", time: getCurrentTime(), type: 'text' });
-                    document.getElementById('chat-status-text').innerText = 'AI Bot (Always Online)';
-                }, 1000);
+                    push(ref(db, 'chats/' + activeChatId), { 
+                        from: 'vip', text: getSmartReply(text), time: getCurrentTime(), type: 'text' 
+                    });
+                    document.getElementById('chat-status-text').innerText = 'AI Assistant';
+                }, 1500);
             }
         }
     }
 
-    document.getElementById('msg-input').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') window.handleSendTextAction();
-    });
+    window.sendImageMsg = async function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = async function(e) { 
+                let activeChatId = getChatId(window.currentUser, window.activeChatUser);
+                await push(ref(db, 'chats/' + activeChatId), {
+                    from: window.currentUser, text: e.target.result, type: 'image', time: getCurrentTime()
+                });
+            }
+            reader.readAsDataURL(file);
+        }
+    }
 
-    window.saveMessage = async function(content, type) {
-        let activeChatId = getChatId(window.currentUser, window.activeChatUser);
-        await push(ref(db, 'chats/' + activeChatId), {
-            from: window.currentUser,
-            text: content,
-            type: type,
-            time: getCurrentTime()
+    // --- REALTIME FIREBASE CALL SIGNALING (Proper Call System) ---
+    window.listenForIncomingCalls = function() {
+        if(callListener) callListener(); // Reset old
+        callListener = onValue(ref(db, 'calls/' + window.currentUser), (snap) => {
+            if(snap.exists()) {
+                let callData = snap.val();
+                if(callData.status === 'calling') {
+                    // Show incoming call UI
+                    document.getElementById('caller-name').innerText = window.allUsers[callData.from]?.name || callData.from;
+                    document.getElementById('caller-dp').src = window.allUsers[callData.from]?.dp || "https://i.ibb.co/hFRHRQ97";
+                    document.getElementById('incoming-call-screen').style.display = 'flex';
+                    document.getElementById('call-timer').style.display = 'none';
+                    document.getElementById('call-controls').style.display = 'flex';
+                    document.getElementById('audio-ringtone').play().catch(e=>{});
+                } else if(callData.status === 'ended') {
+                    document.getElementById('incoming-call-screen').style.display = 'none';
+                    document.getElementById('audio-ringtone').pause();
+                    document.getElementById('audio-connected').pause();
+                    set(ref(db, 'calls/' + window.currentUser), null); // Clear node
+                }
+            }
         });
     }
 
-    // ----- DELETE LOGIC -----
+    window.initiateCall = function() {
+        if(window.activeChatUser === 'vip') {
+            alert("ACS Assistant abhi calls nahi utha sakta, par message par turant reply dega!");
+            return;
+        }
+        // Send signal to receiver
+        set(ref(db, 'calls/' + window.activeChatUser), {
+            from: window.currentUser,
+            status: 'calling'
+        });
+        window.showToast("Ringing on the other device...");
+        
+        // Listen if they pick up
+        onValue(ref(db, 'calls/' + window.activeChatUser), (snap) => {
+            if(snap.exists() && snap.val().status === 'answered') {
+                window.showToast("Call Connected!");
+            }
+        });
+    }
+
+    window.acceptCall = function() {
+        document.getElementById('audio-ringtone').pause();
+        document.getElementById('audio-connected').play().catch(e=>{});
+        document.getElementById('call-controls').style.display = 'none';
+        document.getElementById('call-timer').style.display = 'block';
+        
+        // Timer visual
+        let sec = 0;
+        setInterval(() => {
+            sec++;
+            let m = Math.floor(sec/60).toString().padStart(2, '0');
+            let s = (sec%60).toString().padStart(2, '0');
+            document.getElementById('call-timer').innerText = m + ":" + s;
+        }, 1000);
+
+        // Tell caller we answered
+        set(ref(db, 'calls/' + window.currentUser + '/status'), 'answered');
+        
+        setTimeout(() => {
+            document.getElementById('incoming-call-screen').style.display = 'none';
+            set(ref(db, 'calls/' + window.currentUser), null);
+        }, 10000); // Ends call after 10 sec for demo
+    }
+
+    window.rejectCall = function() {
+        document.getElementById('audio-ringtone').pause();
+        document.getElementById('incoming-call-screen').style.display = 'none';
+        set(ref(db, 'calls/' + window.currentUser), null);
+    }
+
+    // --- SELECTION & DELETE ---
     let isSelectionMode = false;
     let selectedMsgIds = [];
     let longPressTimer;
@@ -688,10 +728,7 @@
         }, 500); 
     }
     window.handleTouchEnd = function() { clearTimeout(longPressTimer); }
-
-    window.handleMsgClick = function(msgId) {
-        if(isSelectionMode) window.toggleSelection(msgId);
-    }
+    window.handleMsgClick = function(msgId) { if(isSelectionMode) window.toggleSelection(msgId); }
 
     window.toggleSelection = function(msgId) {
         const idx = selectedMsgIds.indexOf(msgId);
@@ -719,12 +756,10 @@
 
     window.executeDelete = async function(type) {
         let activeChatId = getChatId(window.currentUser, window.activeChatUser);
-        
         for (let id of selectedMsgIds) {
             if(type === 'everyone') {
                 await remove(ref(db, `chats/${activeChatId}/${id}`));
             } else if(type === 'me') {
-                // Fetch current message to update deletedFor array
                 const snap = await get(child(ref(db), `chats/${activeChatId}/${id}`));
                 if(snap.exists()) {
                     let data = snap.val();
