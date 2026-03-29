@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#667eea">
+    
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <title>ACS Chat App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -80,8 +85,6 @@
         .chat-user-text h3 { font-size: 17px; margin: 0; font-weight: 600; }
         .chat-user-text p { font-size: 12px; margin: 0; opacity: 0.9; }
         .header-icons { display: flex; gap: 20px; font-size: 20px; }
-        
-        /* Updated Delete Header: Now dark blue/professional instead of red */
         .delete-header { display: none; background: #2c3e50; color: white; padding: 15px; justify-content: space-between; align-items: center; position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; border-bottom-left-radius: 20px; border-bottom-right-radius: 20px; }
 
         /* Chat Body & ACS Branding */
@@ -93,10 +96,7 @@
         .message { max-width: 78%; padding: 10px 12px 22px 14px; margin: 4px 0; border-radius: 15px; font-size: 15px; position: relative; z-index: 5; box-shadow: 0 1px 2px rgba(0,0,0,0.15); line-height: 1.4; word-wrap: break-word; transition: 0.2s; }
         .received { background: #ffffff; align-self: flex-start; border-top-left-radius: 0; color: #2c3e50; }
         .sent { background: linear-gradient(135deg, #dcf8c6 0%, #c1f0a3 100%); align-self: flex-end; border-top-right-radius: 0; color: #1e3c23; }
-        
-        /* NEW Selection Fix: Sirf message red/highlight hoga */
         .message.msg-selected { background: #ffe5e5 !important; border: 2px solid #ff4b2b; opacity: 1; }
-        
         .msg-info { position: absolute; bottom: 4px; right: 8px; font-size: 10px; color: #888; display: flex; align-items: center; gap: 4px; font-weight: 600; }
         .sent .msg-info { color: #558b2f; }
         .blue-tick { color: #34b7f1; font-size: 12px; }
@@ -108,7 +108,6 @@
         .chat-footer i:active { color: #667eea; }
         .chat-input-wrapper { flex: 1; background: #f0f2f5; border-radius: 25px; display: flex; align-items: center; padding: 5px 15px; border: 1px solid #e0e0e0; }
         .chat-input-wrapper input { border: none; background: transparent; width: 100%; padding: 10px 0; outline: none; font-size: 15px; }
-        
         .send-btn { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; border: none; cursor: pointer; flex-shrink: 0; font-size: 18px; }
         .recording { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); animation: pulse 1s infinite; }
         @keyframes pulse { 0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 65, 108, 0.7); } 70% { transform: scale(1.1); box-shadow: 0 0 0 15px rgba(255, 65, 108, 0); } 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(255, 65, 108, 0); } }
@@ -280,10 +279,9 @@
             <div class="header-icons">
                 <i class="fas fa-phone-alt" onclick="window.initiateCall()"></i>
             </div>
-            
             <div class="delete-header" id="delete-header">
                 <div style="display:flex; align-items:center; gap:15px;">
-                    <i class="fas fa-arrow-left" onclick="window.cancelDelete()" style="cursor:pointer;"></i>
+                    <i class="fas fa-arrow-left" onclick="window.cancelDelete()"></i>
                     <span id="del-count" style="font-weight:bold;">1 Selected</span>
                 </div>
                 <div style="display:flex; gap:20px; align-items:center;">
@@ -352,6 +350,22 @@
     let activeChatUnsubscribe = null;
     let callListener = null;
 
+    // --- FULL SCREEN APP MODE TRIGGER ---
+    function makeFullScreen() {
+        let elem = document.documentElement;
+        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+            if (elem.requestFullscreen) {
+                elem.requestFullscreen().catch(e => console.log("FS error"));
+            } else if (elem.webkitRequestFullscreen) { /* Safari */
+                elem.webkitRequestFullscreen().catch(e => console.log("FS error"));
+            } else if (elem.msRequestFullscreen) { /* IE11 */
+                elem.msRequestFullscreen().catch(e => console.log("FS error"));
+            }
+        }
+    }
+    document.addEventListener('click', makeFullScreen, { once: true });
+    document.addEventListener('touchstart', makeFullScreen, { once: true });
+
     // --- UTILS ---
     window.showScreen = function(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -375,11 +389,16 @@
     function getChatId(u1, u2) { return [u1, u2].sort().join('_'); }
 
     // --- INITIALIZE ---
-    window.onload = () => {
+    function initApp() {
         onValue(ref(db, 'users'), (snapshot) => {
             window.allUsers = snapshot.val() || {};
-            if(window.currentUser && document.getElementById('home-screen').classList.contains('active')) {
-                window.renderChatList();
+            if(window.currentUser) {
+                if (window.currentUser !== 'Premium VIP' && window.allUsers[window.currentUser]) {
+                    document.getElementById('home-my-dp').src = window.allUsers[window.currentUser].dp || "https://ui-avatars.com/api/?name=User&background=667eea&color=fff&size=150";
+                }
+                if(document.getElementById('home-screen').classList.contains('active')) {
+                    window.renderChatList();
+                }
             }
         });
 
@@ -389,7 +408,8 @@
         } else {
             window.showScreen('auth-screen');
         }
-    };
+    }
+    initApp();
 
     window.previewDP = function(event, previewElementId) {
         const file = event.target.files[0];
@@ -416,6 +436,7 @@
     }
 
     window.registerUser = async function() {
+        makeFullScreen(); // Enforce Fullscreen
         const name = document.getElementById('reg-name').value.trim();
         const user = document.getElementById('reg-user').value.toLowerCase().trim();
         const pass = document.getElementById('reg-pass').value.trim();
@@ -436,6 +457,7 @@
     }
 
     window.loginUser = async function() {
+        makeFullScreen(); // Enforce Fullscreen
         const user = document.getElementById('login-user').value.toLowerCase().trim();
         const pass = document.getElementById('login-pass').value.trim();
         if(!user || !pass) return window.showToast("Fill both fields!");
@@ -451,6 +473,7 @@
     }
 
     window.premiumLogin = function() {
+        makeFullScreen(); // Enforce Fullscreen
         const pass = document.getElementById('premium-pass').value.trim();
         if(pass === '24361') {
             window.currentUser = 'Premium VIP';
@@ -562,7 +585,7 @@
             document.getElementById('home-my-dp').src = "https://ui-avatars.com/api/?name=ACS&background=f2994a&color=fff&size=150&bold=true";
         } else {
             let uData = window.allUsers[window.currentUser] || {};
-            document.getElementById('home-my-dp').src = uData.dp || "https://ui-avatars.com/api/?name=Me&background=667eea&color=fff&size=150";
+            document.getElementById('home-my-dp').src = uData.dp || "https://ui-avatars.com/api/?name=User&background=667eea&color=fff&size=150";
         }
         window.renderChatList();
     }
@@ -654,8 +677,7 @@
                 let tickHTML = msg.from === window.currentUser ? `<i class="fas fa-check-double blue-tick"></i>` : '';
                 
                 let contentHTML = msg.text;
-                // IMAGE VIEWING FIX: OnClick added strictly to image to open Viewer
-                if(msg.type === 'image') contentHTML = `<img src="${msg.text}" onclick="window.openImageViewer(event)" style="cursor:pointer; max-height:200px; object-fit:cover;">`;
+                if(msg.type === 'image') contentHTML = `<img src="${msg.text}" onclick="window.openImageViewer(event)" style="cursor:pointer; max-height:200px; object-fit:cover; border-radius:10px;">`;
                 if(msg.type === 'audio') contentHTML = `<audio controls src="${msg.text}"></audio>`;
 
                 box.innerHTML += `<div class="message ${alignClass}" id="msg-${childSnap.key}"
@@ -674,7 +696,7 @@
 
     // --- FULL SCREEN IMAGE VIEWER ---
     window.openImageViewer = function(e) {
-        e.stopPropagation(); // Stop message from being selected
+        e.stopPropagation(); 
         const src = e.target.src;
         document.getElementById('full-screen-img').src = src;
         document.getElementById('download-img-link').href = src;
@@ -716,7 +738,7 @@
             if(window.activeChatUser === 'vip') {
                 document.getElementById('chat-status-text').innerText = 'typing...';
                 setTimeout(() => {
-                    let reply = "Mujhe samajh nahi aaya, par main aapki chat server me save kar raha hoon.";
+                    let reply = "Aap ACS Admin (@adarsh) se baat kar sakte hain agar koi zaroori issue ho toh!";
                     let t = text.toLowerCase();
                     if(t.includes('hi') || t.includes('hello')) reply = "Hello! Main ACS Assistant hoon, boliye kaise madad karu?";
                     if(t.includes('kaise') || t.includes('kya haal')) reply = "Main ekdum mast hoon! Aap sunaiye?";
