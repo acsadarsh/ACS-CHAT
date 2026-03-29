@@ -18,6 +18,11 @@
         .active { display: flex; animation: fadeIn 0.3s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* SPLASH SCREEN (NEW) */
+        .splash-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100dvh; background: #ffffff; z-index: 9999; display: flex; flex-direction: column; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+        .splash-logo { width: 130px; height: 130px; border-radius: 50%; box-shadow: 0 10px 30px rgba(0,0,0,0.2); margin-bottom: 20px; border: 4px solid #764ba2; animation: pulseSplash 1.5s infinite; object-fit: cover; }
+        @keyframes pulseSplash { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
         .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
         .btn-gradient { background: linear-gradient(to right, #11998e, #38ef7d); color: white; border: none; padding: 14px; border-radius: 25px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; margin-top: 10px; display: flex; justify-content: center; align-items: center; gap: 10px; box-shadow: 0 4px 15px rgba(56, 239, 125, 0.4); transition: transform 0.2s; }
         .btn-gradient:active { transform: scale(0.95); }
@@ -104,12 +109,10 @@
         .chat-footer i:active { color: #667eea; }
         .chat-input-wrapper { flex: 1; background: #f0f2f5; border-radius: 25px; display: flex; align-items: center; padding: 5px 15px; border: 1px solid #e0e0e0; }
         .chat-input-wrapper input { border: none; background: transparent; width: 100%; padding: 10px 0; outline: none; font-size: 15px; }
-        .send-btn { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; border: none; cursor: pointer; flex-shrink: 0; font-size: 18px; }
+        .send-btn { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; border: none; cursor: pointer; flex-shrink: 0; font-size: 18px; outline: none; }
         .recording { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); animation: pulse 1s infinite; }
 
-        /* ================= NEW CALLING DASHBOARDS ================= */
-        
-        /* Incoming Call Full Screen */
+        /* Realtime Call UI */
         .incoming-call-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #2c3e50 0%, #000000 100%); z-index: 5000; flex-direction: column; justify-content: center; align-items: center; color: white; }
         .incoming-call-modal img { width: 160px; height: 160px; border-radius: 50%; border: 4px solid #38ef7d; margin-top: 20px; margin-bottom: 20px; animation: pulseCall 1.5s infinite; object-fit: cover;}
         @keyframes pulseCall { 0% { box-shadow: 0 0 0 0 rgba(56, 239, 125, 0.7); } 70% { box-shadow: 0 0 0 30px rgba(56, 239, 125, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 239, 125, 0); } }
@@ -123,7 +126,6 @@
         .call-info { text-align: center; margin-top: 40px; }
         .call-info img { width: 150px; height: 150px; border-radius: 50%; margin-bottom: 20px; border: 4px solid rgba(255,255,255,0.2); object-fit: cover; }
         .call-info h2 { font-size: 32px; font-weight: bold; margin-bottom: 10px; }
-        .call-info p { font-size: 16px; opacity: 0.8; }
         .call-controls { display: flex; justify-content: center; gap: 35px; margin-bottom: 60px; width: 100%; }
         .call-btn { width: 65px; height: 65px; border-radius: 50%; border: none; font-size: 26px; color: white; background: rgba(255,255,255,0.2); cursor: pointer; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); transition: 0.3s; }
         .call-btn.end { background: #e74c3c; transform: scale(1.1); box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); }
@@ -143,7 +145,6 @@
         .del-everyone { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
         .del-me { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
 
-        /* Full Screen Image Viewer */
         .image-viewer-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; flex-direction: column; justify-content: center; align-items: center; }
         .image-viewer-modal img { max-width: 95%; max-height: 75vh; object-fit: contain; border-radius: 10px; }
         .close-img-btn { position: absolute; top: 20px; right: 20px; color: white; font-size: 35px; cursor: pointer; }
@@ -154,8 +155,15 @@
 </head>
 <body>
 
-<audio id="audio-ringtone" loop><source src="https://www.soundjay.com/phone/sounds/telephone-ring-04.mp3" type="audio/mpeg"></audio>
-<audio id="audio-connected"><source src="https://www.soundjay.com/button/sounds/button-09.mp3" type="audio/mpeg"></audio>
+<div id="splash-screen" class="splash-screen">
+    <img src="https://ui-avatars.com/api/?name=ACS&background=764ba2&color=fff&size=150&bold=true" class="splash-logo">
+    <h1 style="color: #764ba2; font-size: 36px; margin:0; font-weight:900;">ACS Chat</h1>
+    <p style="color: #f2994a; font-weight: bold; margin-top: 15px; font-size:14px; letter-spacing:1px;">Handled by Adarsh Chandravanshi</p>
+</div>
+
+<audio id="audio-ringtone" loop preload="auto"><source src="https://www.soundjay.com/phone/sounds/telephone-ring-03a.mp3" type="audio/mpeg"></audio>
+<audio id="audio-ringback" loop preload="auto"><source src="https://www.soundjay.com/phone/sounds/telephone-ring-01a.mp3" type="audio/mpeg"></audio>
+<audio id="audio-connected" preload="auto"><source src="https://www.soundjay.com/button/sounds/button-09.mp3" type="audio/mpeg"></audio>
 
 <div id="incoming-call-screen" class="incoming-call-modal">
     <h2 id="incoming-call-type" style="color:#38ef7d; margin-bottom: 20px;">Incoming Call...</h2>
@@ -185,7 +193,7 @@
 
 <div class="app-container">
 
-    <div id="auth-screen" class="screen active">
+    <div id="auth-screen" class="screen">
         <div class="auth-logo"><img src="https://ui-avatars.com/api/?name=ACS&background=764ba2&color=fff&size=150&bold=true" alt="ACS"></div>
         <div class="handled-by">Handled by Adarsh Chandravanshi</div>
         
@@ -224,6 +232,7 @@
             <input type="password" class="input-box" id="login-pass" placeholder="Password (Max 6)" maxlength="6">
             <button class="btn-gradient" onclick="window.loginUser()">Login</button>
             <p class="link-text" onclick="window.showScreen('forgot-screen')">Forgot Password?</p>
+            <button class="btn-gradient btn-fixer" onclick="window.fixAppIssues()" style="margin-top:20px; background: linear-gradient(to right, #4facfe, #00f2fe);"><i class="fas fa-wrench"></i> Fix App Issues</button>
         </div>
 
         <div id="form-premium" class="form-container">
@@ -248,6 +257,7 @@
                 <button class="btn-gradient btn-premium" onclick="window.resetPassword()">Reset Password</button>
             </div>
             <p class="link-text" onclick="window.showScreen('auth-screen')">Back to Login</p>
+            <button class="btn-gradient btn-success" onclick="window.open('https://wa.me/918252900810', '_blank')"><i class="fab fa-whatsapp"></i> Contact Us</button>
         </div>
     </div>
 
@@ -270,7 +280,9 @@
                 <input type="text" id="search-input" placeholder="Search user..." oninput="window.filterUsers()">
             </div>
         </div>
-        <div class="chat-list" id="chat-list-container"></div>
+        <div class="chat-list" id="chat-list-container">
+            <div style="text-align:center; padding: 20px; color:#888;">Syncing with Cloud... <i class="fas fa-spinner fa-spin"></i></div>
+        </div>
     </div>
 
     <div id="global-chat-screen" class="screen">
@@ -284,7 +296,7 @@
     <div id="profile-settings-screen" class="screen">
         <div class="home-header gradient-bg" style="flex-direction:row; align-items:center; gap:15px;">
             <i class="fas fa-arrow-left" onclick="window.loadHome()" style="cursor: pointer; font-size: 18px;"></i>
-            <span style="font-size:18px; font-weight:bold;">Profile Settings</span>
+            <span style="font-size:18px; font-weight:bold;">Profile & Settings</span>
         </div>
         <div class="settings-body" id="settings-body-content"></div>
     </div>
@@ -343,7 +355,12 @@
             </div>
         </div>
         
-        <div class="chat-body" id="chat-box"></div>
+        <div class="chat-body" id="chat-box">
+            <div class="chat-watermark">
+                <img src="https://ui-avatars.com/api/?name=ACS&background=764ba2&color=fff&size=150&bold=true"><br>
+                <h1>ACS Chat</h1>
+            </div>
+        </div>
 
         <div class="chat-footer">
             <div class="chat-input-wrapper">
@@ -351,7 +368,6 @@
                 <i class="fas fa-camera" style="margin-left:10px; font-size:18px; color:#11998e; cursor:pointer;" onclick="document.getElementById('chat-img-upload').click()"></i>
                 <input type="file" id="chat-img-upload" accept="image/*" style="display:none;" onchange="window.sendImageMsg(event)">
             </div>
-            
             <button class="send-btn" id="send-btn-icon" 
                     onmousedown="window.startRealRecord(event)" onmouseup="window.stopRealRecord(event)" onmouseleave="window.stopRealRecord(event)"
                     ontouchstart="window.startRealRecord(event)" ontouchend="window.stopRealRecord(event)">
@@ -399,10 +415,10 @@
     let callListener = null;
     let currentCallType = 'audio';
 
-    // Video Call Camera stream
     let localStream = null;
     let useFrontCamera = true;
 
+    // --- FULL SCREEN ENFORCEMENT ---
     function enforceFullScreen() {
         try {
             let elem = document.documentElement;
@@ -415,10 +431,12 @@
     document.addEventListener('click', enforceFullScreen, { once: true });
     document.addEventListener('touchstart', enforceFullScreen, { once: true });
 
+    // --- UTILS ---
     window.showScreen = function(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById('audio-call-screen').style.display = 'none';
         document.getElementById('video-call-screen').style.display = 'none';
+        
         if(screenId === 'audio-call-screen') {
             document.getElementById('audio-call-screen').style.display = 'flex';
         } else if (screenId === 'video-call-screen') {
@@ -426,6 +444,7 @@
         } else {
             document.getElementById(screenId).classList.add('active');
         }
+        
         tempDPBase64 = null; 
         if(window.cancelDelete) window.cancelDelete();
     }
@@ -447,29 +466,49 @@
     function getCurrentTime() { return new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}); }
     function getChatId(u1, u2) { return [u1, u2].sort().join('_'); }
 
-    document.addEventListener("DOMContentLoaded", () => {
-        let storedUser = localStorage.getItem('acs_currentUser');
-        if (storedUser === 'null' || storedUser === 'undefined') storedUser = null;
-        window.currentUser = storedUser;
-
-        if (window.currentUser) {
-            window.loadHome();
-            window.listenForIncomingCalls();
-        } else {
-            window.showScreen('auth-screen');
+    // --- APP FIXER ---
+    window.fixAppIssues = function() {
+        if(confirm("Yeh tool app ka sara kachra aur error saaf kar dega. Continue?")) {
+            localStorage.clear();
+            window.showToast("System Repaired! Reloading...");
+            setTimeout(() => { location.reload(); }, 1500);
         }
+    }
 
-        onValue(ref(db, 'users'), (snapshot) => {
-            window.allUsers = snapshot.val() || {};
-            if(window.currentUser) {
-                if (window.currentUser !== 'Premium VIP' && window.allUsers[window.currentUser]) {
-                    document.getElementById('home-my-dp').src = window.allUsers[window.currentUser].dp || "https://ui-avatars.com/api/?name=User&background=667eea&color=fff&size=150";
-                }
-                if(document.getElementById('home-screen').classList.contains('active')) window.renderChatList();
+    // --- INITIALIZE & SPLASH LOGIC ---
+    document.addEventListener("DOMContentLoaded", () => {
+        // Splash Screen Logic
+        setTimeout(() => {
+            const splash = document.getElementById('splash-screen');
+            if(splash) {
+                splash.style.opacity = '0';
+                setTimeout(() => splash.style.display = 'none', 500);
             }
-        });
+            
+            // Resume regular boot
+            let storedUser = localStorage.getItem('acs_currentUser');
+            if (storedUser === 'null' || storedUser === 'undefined') storedUser = null;
+            window.currentUser = storedUser;
 
-        onValue(ref(db, 'chats'), (snapshot) => { window.allGlobalChats = snapshot.val() || {}; });
+            if (window.currentUser) {
+                window.loadHome();
+                window.listenForIncomingCalls();
+            } else {
+                window.showScreen('auth-screen');
+            }
+
+            onValue(ref(db, 'users'), (snapshot) => {
+                window.allUsers = snapshot.val() || {};
+                if(window.currentUser) {
+                    if (window.currentUser !== 'Premium VIP' && window.allUsers[window.currentUser]) {
+                        document.getElementById('home-my-dp').src = window.allUsers[window.currentUser].dp || "https://ui-avatars.com/api/?name=User&background=667eea&color=fff&size=150";
+                    }
+                    if(document.getElementById('home-screen').classList.contains('active')) window.renderChatList();
+                }
+            });
+
+            onValue(ref(db, 'chats'), (snapshot) => { window.allGlobalChats = snapshot.val() || {}; });
+        }, 2000); // Show splash for 2 seconds
     });
 
     window.previewDP = function(event, previewElementId) {
@@ -595,6 +634,7 @@
                     <img src="https://ui-avatars.com/api/?name=ACS&background=f2994a&color=fff&size=150&bold=true" style="width:100px; height:100px; border-radius:50%; border:4px solid #f2994a; margin-bottom:20px; object-fit:cover;">
                     <h2 style="color:#764ba2;">Premium Admin</h2>
                     <p style="color:#888; margin-bottom:40px;">Full Database Access</p>
+                    <button class="btn-gradient btn-fixer" onclick="window.fixAppIssues()" style="margin-bottom:20px; background: linear-gradient(to right, #4facfe, #00f2fe);"><i class="fas fa-wrench"></i> Run System Fixer</button>
                     <button class="btn-gradient btn-danger" onclick="window.logout()">Logout Admin</button>
                 </div>
             `;
@@ -627,7 +667,8 @@
                     <input type="text" class="input-box" id="edit-ans" value="${uData.ans || ''}" placeholder="Secret Answer" style="margin-bottom:0; border:none; border-bottom: 2px solid #ddd; border-radius: 0; padding-left: 5px;">
                 </div>
                 <button class="btn-gradient" onclick="window.saveProfileSettings()">Save All Changes</button>
-                <button class="btn-gradient btn-danger" style="margin-top:20px;" onclick="window.logout()">Logout</button>
+                <button class="btn-gradient btn-fixer" onclick="window.fixAppIssues()" style="margin-top:15px; background: linear-gradient(to right, #4facfe, #00f2fe);"><i class="fas fa-wrench"></i> Run System Fixer</button>
+                <button class="btn-gradient btn-danger" style="margin-top:15px;" onclick="window.logout()">Logout</button>
             `;
         }
         window.showScreen('profile-settings-screen');
@@ -671,6 +712,7 @@
         });
     }
 
+    // --- GLOBAL CHATS (SPY MODE) & DELETE ROOM ---
     window.openGlobalChats = function() {
         const list = document.getElementById('global-chat-list');
         list.innerHTML = '';
@@ -681,16 +723,25 @@
             let msgCount = Object.keys(window.allGlobalChats[chatId]).length;
             list.innerHTML += `
                 <div style="background:#fafafa; border:1px solid #ddd; padding:15px; border-radius:10px; margin-bottom:15px;">
-                    <h4 style="color:#764ba2; margin-bottom:5px;">Room: ${chatId}</h4>
+                    <h4 style="color:#764ba2; margin-bottom:5px;">Room ID: ${chatId}</h4>
                     <p style="font-size:13px; color:#666; margin-bottom:10px;">Total Messages: ${msgCount}</p>
                     <div style="max-height:150px; overflow-y:auto; background:white; padding:10px; border-radius:5px; border:1px dashed #ccc;">
-                        ${Object.values(window.allGlobalChats[chatId]).map(m => `<div style="font-size:12px; margin-bottom:5px;"><b>${m.from}:</b> ${m.type==='image'?'[Photo]':m.text}</div>`).join('')}
+                        ${Object.values(window.allGlobalChats[chatId]).map(m => `<div style="font-size:12px; margin-bottom:5px;"><b>${m.from}:</b> ${m.type==='image'?'[Photo]':(m.type==='audio'?'[Audio]':m.text)}</div>`).join('')}
                     </div>
+                    <button class="btn-gradient btn-danger" style="padding: 6px 12px; font-size:12px; width:auto; margin-top:10px;" onclick="window.deleteGlobalChatRoom('${chatId}')"><i class="fas fa-trash"></i> Delete Chat History</button>
                 </div>
             `;
         }
         if(!hasChats) list.innerHTML = "<p style='text-align:center;'>No chats found in database.</p>";
         window.showScreen('global-chat-screen');
+    }
+
+    window.deleteGlobalChatRoom = async function(chatId) {
+        if(confirm('WARNING: Are you sure you want to completely delete this chat room history?')) {
+            await remove(ref(db, 'chats/' + chatId));
+            window.showToast('Chat Room History Deleted!');
+            window.openGlobalChats(); // Refresh
+        }
     }
 
     window.deleteScammer = async function(u) {
@@ -817,18 +868,26 @@
         document.getElementById('image-viewer').style.display = 'none';
     }
 
-    // --- SENDING ---
+    // --- PRO KEYBOARD UX FIX FOR TYPING ---
+    document.getElementById('msg-input').addEventListener('focus', function() {
+        setTimeout(() => {
+            window.scrollTo(0, document.body.scrollHeight);
+            const box = document.getElementById('chat-box');
+            box.scrollTop = box.scrollHeight;
+        }, 300);
+    });
+
     window.toggleMicSend = function() {
         const input = document.getElementById('msg-input').value;
         const btn = document.getElementById('send-btn-icon');
         if(input.trim().length > 0) {
             btn.innerHTML = '<i class="fas fa-paper-plane"></i>';
-            btn.onclick = window.handleSendTextAction;
-            btn.onmousedown = null; btn.ontouchstart = null;
+            // The magic fix: Using ontouchstart + preventDefault keeps keyboard open!
+            btn.onmousedown = function(e){ e.preventDefault(); window.handleSendTextAction(); };
+            btn.ontouchstart = function(e){ e.preventDefault(); window.handleSendTextAction(); };
             btn.onmouseup = null; btn.ontouchend = null; btn.onmouseleave = null;
         } else {
             btn.innerHTML = '<i class="fas fa-microphone"></i>';
-            btn.onclick = null; 
             btn.onmousedown = window.startRealRecord; btn.ontouchstart = window.startRealRecord;
             btn.onmouseup = window.stopRealRecord; btn.ontouchend = window.stopRealRecord; btn.onmouseleave = window.stopRealRecord;
         }
@@ -938,12 +997,13 @@
                     document.getElementById('incoming-call-screen').style.display = 'flex';
                     document.getElementById('call-timer').style.display = 'none';
                     document.getElementById('incoming-call-controls').style.display = 'flex';
+                    // Play Ringtone for receiver
                     document.getElementById('audio-ringtone').play().catch(e=>{});
                 } else if(callData.status === 'ended') {
                     document.getElementById('incoming-call-screen').style.display = 'none';
                     document.getElementById('audio-ringtone').pause();
                     document.getElementById('audio-connected').pause();
-                    window.endCallUI(); // End if actively in dashboard
+                    window.endCallUI(); 
                     set(ref(db, 'calls/' + window.currentUser), null); 
                 }
             }
@@ -957,9 +1017,10 @@
         }
         currentCallType = type;
         set(ref(db, 'calls/' + window.activeChatUser), { from: window.currentUser, type: type, status: 'calling' });
-        window.showToast("Ringing on the other device...");
         
-        // Open appropriate dashboard
+        // Play Ringback Tone for caller
+        document.getElementById('audio-ringback').play().catch(e=>{});
+        
         let targetName = document.getElementById('chat-user-name').innerText;
         let targetDp = document.getElementById('chat-dp').src;
         
@@ -973,12 +1034,12 @@
             document.getElementById('video-call-status').innerText = 'Ringing...';
             document.getElementById('remote-video-placeholder').src = targetDp;
             window.showScreen('video-call-screen');
-            window.startLocalVideo(); // Start camera while ringing
+            window.startLocalVideo(); 
         }
         
         onValue(ref(db, 'calls/' + window.activeChatUser), (snap) => {
             if(snap.exists() && snap.val().status === 'answered') {
-                window.showToast("Call Connected!");
+                document.getElementById('audio-ringback').pause();
                 if(type === 'audio') document.getElementById('audio-call-status').innerText = 'Connected 00:01';
                 if(type === 'video') document.getElementById('video-call-status').innerText = 'Connected 00:01';
             }
@@ -1016,6 +1077,7 @@
     }
 
     window.endCall = function() {
+        document.getElementById('audio-ringback').pause();
         if(window.activeChatUser) {
             set(ref(db, 'calls/' + window.activeChatUser + '/status'), 'ended');
         }
@@ -1145,5 +1207,6 @@
         window.showToast("Message Deleted");
     }
 </script>
+
 </body>
 </html>
