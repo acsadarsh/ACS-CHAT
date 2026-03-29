@@ -12,6 +12,7 @@
     <title>ACS Chat App</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* CSS 100% UNTOUCHED - EXACTLY AS YOU LIKED IT */
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
         body { background-color: #f4f7f6; display: flex; justify-content: center; height: 100dvh; align-items: center; margin: 0; overflow: hidden; }
         
@@ -120,7 +121,7 @@
         .btn-call-accept { background: #25D366; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; color: white; border: none; cursor: pointer; }
         .btn-call-reject { background: #ff4b2b; width: 60px; height: 60px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; color: white; border: none; cursor: pointer; }
 
-        /* Modals (Delete, Forward, Image Viewer) */
+        /* Modals */
         .modal-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
         .delete-box { background: white; padding: 20px; border-radius: 15px; width: 85%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .delete-box p { padding: 12px; margin: 10px 0; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 15px; }
@@ -281,7 +282,7 @@
             </div>
             <div class="delete-header" id="delete-header">
                 <div style="display:flex; align-items:center; gap:15px;">
-                    <i class="fas fa-arrow-left" onclick="window.cancelDelete()"></i>
+                    <i class="fas fa-arrow-left" onclick="window.cancelDelete()" style="cursor:pointer;"></i>
                     <span id="del-count" style="font-weight:bold;">1 Selected</span>
                 </div>
                 <div style="display:flex; gap:20px; align-items:center;">
@@ -292,11 +293,7 @@
         </div>
         
         <div class="chat-body" id="chat-box">
-            <div class="chat-watermark">
-                <img src="https://ui-avatars.com/api/?name=ACS&background=764ba2&color=fff&size=150&bold=true"><br>
-                <h1>ACS Chat</h1>
             </div>
-        </div>
 
         <div class="chat-footer">
             <div class="chat-input-wrapper">
@@ -304,7 +301,6 @@
                 <i class="fas fa-camera" style="margin-left:10px; font-size:18px; color:#11998e; cursor:pointer;" onclick="document.getElementById('chat-img-upload').click()"></i>
                 <input type="file" id="chat-img-upload" accept="image/*" style="display:none;" onchange="window.sendImageMsg(event)">
             </div>
-            
             <button class="send-btn" id="send-btn-icon" 
                     onmousedown="window.startRealRecord(event)" onmouseup="window.stopRealRecord(event)" onmouseleave="window.stopRealRecord(event)"
                     ontouchstart="window.startRealRecord(event)" ontouchend="window.stopRealRecord(event)">
@@ -344,27 +340,24 @@
     const db = getDatabase(app);
 
     window.allUsers = {};
-    window.currentUser = localStorage.getItem('acs_currentUser') || null;
+    window.currentUser = null;
     window.activeChatUser = null;
     let tempDPBase64 = null;
     let activeChatUnsubscribe = null;
     let callListener = null;
 
-    // --- FULL SCREEN APP MODE TRIGGER ---
-    function makeFullScreen() {
-        let elem = document.documentElement;
-        if (!document.fullscreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
-            if (elem.requestFullscreen) {
-                elem.requestFullscreen().catch(e => console.log("FS error"));
-            } else if (elem.webkitRequestFullscreen) { /* Safari */
-                elem.webkitRequestFullscreen().catch(e => console.log("FS error"));
-            } else if (elem.msRequestFullscreen) { /* IE11 */
-                elem.msRequestFullscreen().catch(e => console.log("FS error"));
+    // Full Screen Enforcement (Try Catch to avoid blocking script)
+    function enforceFullScreen() {
+        try {
+            let elem = document.documentElement;
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                if (elem.requestFullscreen) elem.requestFullscreen().catch(()=>{});
+                else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen().catch(()=>{});
             }
-        }
+        } catch(e){}
     }
-    document.addEventListener('click', makeFullScreen, { once: true });
-    document.addEventListener('touchstart', makeFullScreen, { once: true });
+    document.addEventListener('click', enforceFullScreen, { once: true });
+    document.addEventListener('touchstart', enforceFullScreen, { once: true });
 
     // --- UTILS ---
     window.showScreen = function(screenId) {
@@ -388,8 +381,20 @@
     function getCurrentTime() { return new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}); }
     function getChatId(u1, u2) { return [u1, u2].sort().join('_'); }
 
-    // --- INITIALIZE ---
-    function initApp() {
+    // --- PROPER INITIALIZATION FIXED ---
+    document.addEventListener("DOMContentLoaded", () => {
+        // Safe check for localStorage 'null' string bug
+        let storedUser = localStorage.getItem('acs_currentUser');
+        if (storedUser === 'null' || storedUser === 'undefined') storedUser = null;
+        window.currentUser = storedUser;
+
+        if (window.currentUser) {
+            window.loadHome();
+            window.listenForIncomingCalls();
+        } else {
+            window.showScreen('auth-screen');
+        }
+
         onValue(ref(db, 'users'), (snapshot) => {
             window.allUsers = snapshot.val() || {};
             if(window.currentUser) {
@@ -401,15 +406,7 @@
                 }
             }
         });
-
-        if (window.currentUser) {
-            window.loadHome();
-            window.listenForIncomingCalls();
-        } else {
-            window.showScreen('auth-screen');
-        }
-    }
-    initApp();
+    });
 
     window.previewDP = function(event, previewElementId) {
         const file = event.target.files[0];
@@ -425,10 +422,13 @@
 
     // --- AUTHENTICATION ---
     window.checkUsername = function() {
-        const val = document.getElementById('reg-user').value.toLowerCase().trim();
+        let val = document.getElementById('reg-user').value.toLowerCase().trim();
+        val = val.replace(/[^a-z0-9_]/g, ''); // Sanitizer
+        document.getElementById('reg-user').value = val; 
+
         const indicator = document.getElementById('user-indicator');
         if (val.length === 0) { indicator.innerHTML = ''; return; }
-        if(/[^a-z0-9_]/i.test(val) || window.allUsers[val] || val === 'vip' || val === 'premium vip') {
+        if (window.allUsers[val] || val === 'vip' || val === 'premium vip') {
             indicator.innerHTML = '❌'; indicator.style.color = '#ff4b2b';
         } else {
             indicator.innerHTML = '✅'; indicator.style.color = '#38ef7d';
@@ -436,44 +436,46 @@
     }
 
     window.registerUser = async function() {
-        makeFullScreen(); // Enforce Fullscreen
         const name = document.getElementById('reg-name').value.trim();
-        const user = document.getElementById('reg-user').value.toLowerCase().trim();
+        let user = document.getElementById('reg-user').value.toLowerCase().trim();
+        user = user.replace(/[^a-z0-9_]/g, ''); // Safety first
         const pass = document.getElementById('reg-pass').value.trim();
         const sq = document.getElementById('reg-sq').value;
         const ans = document.getElementById('reg-ans').value.toLowerCase().trim();
         const dp = tempDPBase64 || "https://ui-avatars.com/api/?name=User&background=667eea&color=fff&size=150";
 
         if(!name || !user || !pass || !ans) return window.showToast("Please fill all details!");
-        if(/[^a-z0-9_]/i.test(user)) return window.showToast("Username without space/symbols!");
         if(window.allUsers[user] || user === 'vip') return window.showToast("Username taken!");
 
-        window.showToast("Creating Account...");
-        await set(ref(db, 'users/' + user), { name, pass, dp, sq, ans });
-        window.currentUser = user;
-        localStorage.setItem('acs_currentUser', user);
-        window.loadHome();
-        window.listenForIncomingCalls();
-    }
-
-    window.loginUser = async function() {
-        makeFullScreen(); // Enforce Fullscreen
-        const user = document.getElementById('login-user').value.toLowerCase().trim();
-        const pass = document.getElementById('login-pass').value.trim();
-        if(!user || !pass) return window.showToast("Fill both fields!");
-
-        window.showToast("Logging in...");
-        const snap = await get(child(ref(db), `users/${user}`));
-        if (snap.exists() && snap.val().pass === pass) {
+        try {
+            window.showToast("Creating Account...");
+            await set(ref(db, 'users/' + user), { name, pass, dp, sq, ans });
             window.currentUser = user;
             localStorage.setItem('acs_currentUser', user);
             window.loadHome();
             window.listenForIncomingCalls();
-        } else { window.showToast("Wrong Username/Password!"); }
+        } catch(e) { window.showToast("Error: Check connection"); }
+    }
+
+    window.loginUser = async function() {
+        let user = document.getElementById('login-user').value.toLowerCase().trim();
+        user = user.replace(/[^a-z0-9_]/g, '');
+        const pass = document.getElementById('login-pass').value.trim();
+        if(!user || !pass) return window.showToast("Fill both fields!");
+
+        try {
+            window.showToast("Logging in...");
+            const snap = await get(child(ref(db), `users/${user}`));
+            if (snap.exists() && snap.val().pass === pass) {
+                window.currentUser = user;
+                localStorage.setItem('acs_currentUser', user);
+                window.loadHome();
+                window.listenForIncomingCalls();
+            } else { window.showToast("Wrong Username/Password!"); }
+        } catch(e) { window.showToast("Network Error!"); }
     }
 
     window.premiumLogin = function() {
-        makeFullScreen(); // Enforce Fullscreen
         const pass = document.getElementById('premium-pass').value.trim();
         if(pass === '24361') {
             window.currentUser = 'Premium VIP';
@@ -493,25 +495,33 @@
     }
 
     window.checkSecurity = async function() {
-        const user = document.getElementById('for-user').value.toLowerCase().trim();
-        const snap = await get(child(ref(db), `users/${user}`));
-        if(snap.exists()) {
-            document.getElementById('sec-q').innerText = snap.val().sq;
-            document.getElementById('sec-area').style.display = 'block';
-        } else { window.showToast("User not found!"); }
+        try {
+            let user = document.getElementById('for-user').value.toLowerCase().trim();
+            user = user.replace(/[^a-z0-9_]/g, '');
+            if(!user) return window.showToast("Enter username!");
+            const snap = await get(child(ref(db), `users/${user}`));
+            if(snap.exists()) {
+                document.getElementById('sec-q').innerText = snap.val().sq;
+                document.getElementById('sec-area').style.display = 'block';
+            } else { window.showToast("User not found!"); }
+        } catch(e) { window.showToast("Error checking user!"); }
     }
 
     window.resetPassword = async function() {
-        const user = document.getElementById('for-user').value.toLowerCase().trim();
-        const ans = document.getElementById('for-ans').value.toLowerCase().trim();
-        const newPass = document.getElementById('for-new-pass').value.trim();
+        try {
+            let user = document.getElementById('for-user').value.toLowerCase().trim().replace(/[^a-z0-9_]/g, '');
+            const ans = document.getElementById('for-ans').value.toLowerCase().trim();
+            const newPass = document.getElementById('for-new-pass').value.trim();
 
-        const snap = await get(child(ref(db), `users/${user}`));
-        if(snap.exists() && snap.val().ans === ans) {
-            await set(ref(db, `users/${user}/pass`), newPass);
-            window.showToast("Password Reset Successful!");
-            window.showScreen('auth-screen');
-        } else { window.showToast("Wrong Secret Answer!"); }
+            if(!ans || !newPass) return window.showToast("Fill all fields");
+
+            const snap = await get(child(ref(db), `users/${user}`));
+            if(snap.exists() && snap.val().ans === ans) {
+                await set(ref(db, `users/${user}/pass`), newPass);
+                window.showToast("Password Reset Successful!");
+                window.showScreen('auth-screen');
+            } else { window.showToast("Wrong Secret Answer!"); }
+        } catch(e) { window.showToast("Error resetting password"); }
     }
 
     // --- FULL PROFILE SETTINGS ---
@@ -603,13 +613,14 @@
 
     window.renderChatList = function() {
         const container = document.getElementById('chat-list-container');
-        container.innerHTML = '';
+        // STRING BUFFERING - Removes Lag!
+        let htmlContent = '';
         
         if(window.currentUser === 'Premium VIP') {
-            container.innerHTML += `<div style="padding:10px 20px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; font-weight:bold;">All Database Users</div>`;
+            htmlContent += `<div style="padding:10px 20px; background:linear-gradient(135deg, #667eea, #764ba2); color:white; font-weight:bold;">All Database Users</div>`;
             for(let u in window.allUsers) {
                 let dp = window.allUsers[u].dp || "https://ui-avatars.com/api/?name=User&background=667eea&color=fff&size=150";
-                container.innerHTML += `
+                htmlContent += `
                     <div class="chat-item admin-user-list" onclick="window.openChat('${u}', '${window.allUsers[u].name}')">
                         <img src="${dp}">
                         <div class="chat-details">
@@ -618,10 +629,11 @@
                         </div>
                     </div>`;
             }
+            container.innerHTML = htmlContent;
             return;
         }
 
-        container.innerHTML += `
+        htmlContent += `
             <div class="chat-item" onclick="window.openChat('vip', 'ACS Assistant')">
                 <img src="https://ui-avatars.com/api/?name=ACS&background=f2994a&color=fff&size=150&bold=true" style="border:2px solid #38ef7d;">
                 <div class="chat-details">
@@ -635,7 +647,7 @@
             let displayName = window.allUsers[targetUser].name;
             let dp = window.allUsers[targetUser].dp || "https://ui-avatars.com/api/?name=User&background=667eea&color=fff&size=150";
             
-            container.innerHTML += `
+            htmlContent += `
                 <div class="chat-item" onclick="window.openChat('${targetUser}', '${displayName}')">
                     <img src="${dp}">
                     <div class="chat-details">
@@ -644,6 +656,7 @@
                     </div>
                 </div>`;
         }
+        container.innerHTML = htmlContent;
     }
 
     // --- CHAT SYSTEM ---
@@ -663,10 +676,11 @@
 
         activeChatUnsubscribe = onValue(ref(db, 'chats/' + activeChatId), (snapshot) => {
             const box = document.getElementById('chat-box');
-            box.innerHTML = `<div class="chat-watermark"><img src="https://ui-avatars.com/api/?name=ACS&background=764ba2&color=fff&size=150&bold=true"><br><h1>ACS Chat</h1></div>`;
+            // STRING BUFFERING - MASSIVELY REDUCES LAG
+            let htmlContent = `<div class="chat-watermark"><img src="https://ui-avatars.com/api/?name=ACS&background=764ba2&color=fff&size=150&bold=true"><br><h1>ACS Chat</h1></div>`;
             
             if(window.activeChatUser === 'vip' && !snapshot.exists()) {
-                box.innerHTML += `<div class="message received">Namaste Adarsh Bhai! Main ACS Assistant hoon. Boliye kaise madad karu?<div class="msg-info">${getCurrentTime()}</div></div>`;
+                htmlContent += `<div class="message received">Namaste Adarsh Bhai! Main ACS Assistant hoon. Boliye kaise madad karu?<div class="msg-info">${getCurrentTime()}</div></div>`;
             }
 
             snapshot.forEach(childSnap => {
@@ -680,7 +694,7 @@
                 if(msg.type === 'image') contentHTML = `<img src="${msg.text}" onclick="window.openImageViewer(event)" style="cursor:pointer; max-height:200px; object-fit:cover; border-radius:10px;">`;
                 if(msg.type === 'audio') contentHTML = `<audio controls src="${msg.text}"></audio>`;
 
-                box.innerHTML += `<div class="message ${alignClass}" id="msg-${childSnap.key}"
+                htmlContent += `<div class="message ${alignClass}" id="msg-${childSnap.key}"
                     onmousedown="window.handleTouchStart('${childSnap.key}')" onmouseup="window.handleTouchEnd()" 
                     ontouchstart="window.handleTouchStart('${childSnap.key}')" ontouchend="window.handleTouchEnd()"
                     onclick="window.handleMsgClick('${childSnap.key}')">
@@ -688,6 +702,7 @@
                     <div class="msg-info">${msg.time} ${tickHTML}</div>
                 </div>`;
             });
+            box.innerHTML = htmlContent;
             box.scrollTop = box.scrollHeight;
         });
 
@@ -734,7 +749,6 @@
             input.value = '';
             window.toggleMicSend();
             
-            // SMART AI BOT
             if(window.activeChatUser === 'vip') {
                 document.getElementById('chat-status-text').innerText = 'typing...';
                 setTimeout(() => {
