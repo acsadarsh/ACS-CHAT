@@ -83,13 +83,11 @@
         .chat-time { font-size: 11px; color: #95a5a6; font-weight: 600; }
         .chat-msg { font-size: 14px; color: #7f8c8d; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 25px; }
         
-        /* UNREAD BADGE */
         .unread-badge { background: #25D366; color: white; border-radius: 50%; padding: 2px 7px; font-size: 11px; font-weight: bold; position: absolute; right: 20px; bottom: 15px; box-shadow: 0 2px 5px rgba(37,211,102,0.4); }
 
         .admin-user-list { display: flex; justify-content: space-between; align-items: center; padding: 15px 20px; border-bottom: 1px solid #eee; background: #fafafa; }
         .settings-body { padding: 25px 20px; overflow-y: auto; flex: 1; }
 
-        /* Chat Screen */
         .chat-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 15px; z-index: 10; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: relative; }
         .chat-user-info { display: flex; align-items: center; gap: 12px; cursor: pointer; }
         .chat-user-info img { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; border: 2px solid rgba(255,255,255,0.5); background: white; }
@@ -122,7 +120,6 @@
         .send-btn { background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); color: white; border-radius: 50%; width: 45px; height: 45px; display: flex; justify-content: center; align-items: center; border: none; cursor: pointer; flex-shrink: 0; font-size: 18px; outline: none; }
         .recording { background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%); animation: pulse 1s infinite; }
 
-        /* Realtime Call UI */
         .incoming-call-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #2c3e50 0%, #000000 100%); z-index: 5000; flex-direction: column; justify-content: center; align-items: center; color: white; }
         .incoming-call-modal img { width: 160px; height: 160px; border-radius: 50%; border: 4px solid #38ef7d; margin-top: 20px; margin-bottom: 20px; animation: pulseCall 1.5s infinite; object-fit: cover;}
         @keyframes pulseCall { 0% { box-shadow: 0 0 0 0 rgba(56, 239, 125, 0.7); } 70% { box-shadow: 0 0 0 30px rgba(56, 239, 125, 0); } 100% { box-shadow: 0 0 0 0 rgba(56, 239, 125, 0); } }
@@ -138,16 +135,19 @@
         .call-controls { display: flex; justify-content: center; gap: 35px; margin-bottom: 60px; width: 100%; }
         .call-btn { width: 65px; height: 65px; border-radius: 50%; border: none; font-size: 26px; color: white; background: rgba(255,255,255,0.2); cursor: pointer; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); transition: 0.3s; }
         .call-btn.end { background: #e74c3c; transform: scale(1.1); box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); }
+        .call-btn.active { background: white; color: #2c3e50; }
 
         #video-call-screen { background: #000; color: white; z-index: 4000; position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: none; flex-direction: column; justify-content: space-between; }
         .video-header { position: absolute; top: 40px; left: 0; width: 100%; text-align: center; z-index: 4002; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        #remote-video-placeholder { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 4000; background: #222; }
+        #remote-video-placeholder { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 4000; opacity: 0.5; filter: blur(10px); }
         #local-video { position: absolute; top: 20px; right: 20px; width: 110px; height: 160px; object-fit: cover; border-radius: 12px; border: 2px solid white; z-index: 4002; box-shadow: 0 4px 10px rgba(0,0,0,0.5); background: #333; }
         .video-controls { position: absolute; bottom: 40px; left: 0; width: 100%; display: flex; justify-content: center; gap: 30px; z-index: 4002; }
 
         .modal-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 6000; justify-content: center; align-items: center; }
         .delete-box { background: white; padding: 20px; border-radius: 15px; width: 85%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .delete-box p { padding: 12px; margin: 10px 0; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 15px; }
+        .del-everyone { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .del-me { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
 
         .image-viewer-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; flex-direction: column; justify-content: center; align-items: center; }
         .image-viewer-modal img { max-width: 95%; max-height: 75vh; object-fit: contain; border-radius: 10px; }
@@ -167,7 +167,6 @@
 
 <audio id="audio-ringtone" loop preload="auto"><source src="https://www.soundjay.com/phone/sounds/telephone-ring-03a.mp3" type="audio/mpeg"></audio>
 <audio id="audio-ringback" loop preload="auto"><source src="https://www.soundjay.com/phone/sounds/telephone-ring-01a.mp3" type="audio/mpeg"></audio>
-
 <audio id="remote-audio" autoplay></audio>
 
 <div id="incoming-call-screen" class="incoming-call-modal">
@@ -222,7 +221,7 @@
                 <select id="reg-sq" class="sec-select">
                     <option value="Birth Place?">Birth Place?</option>
                     <option value="Favorite Color?">Favorite Color?</option>
-                    <option value="Favorite Color?">favourite dish?</option>
+                    <option value="favourite dish?">favourite dish?</option>
                 </select>
                 <input type="text" class="input-box" id="reg-ans" placeholder="Secret Answer" style="margin-bottom:0; border:none; border-bottom: 2px solid #ddd; border-radius: 0; padding-left: 5px;">
             </div>
@@ -239,7 +238,7 @@
 
         <div id="form-premium" class="form-container">
             <div style="text-align:center; margin-bottom: 20px;">
-                <img src="<option value="Favorite Color?">Favorite Color?</option>" style="width:80px; height:80px; border-radius:50%; border:3px solid #f2994a;">
+                <img src="https://ui-avatars.com/api/?name=ACS&background=f2994a&color=fff&size=150&bold=true" style="width:80px; height:80px; border-radius:50%; border:3px solid #f2994a; object-fit:cover;">
                 <h3 style="color:#f2994a;">Premium VIP</h3>
             </div>
             <input type="password" class="input-box" id="premium-pass" placeholder="Enter Premium PIN" maxlength="6">
@@ -417,20 +416,28 @@
     let peerConnection = null;
     let useFrontCamera = true;
     
-    // Google Free WebRTC Servers for Real Voice/Video
     const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
 
-    function enforceFullScreen() {
-        try {
-            let elem = document.documentElement;
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                if (elem.requestFullscreen) elem.requestFullscreen().catch(()=>{});
-                else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen().catch(()=>{});
-            }
-        } catch(e){}
+    // --- FULL SCREEN TRIPLE TAP FIX ---
+    let tapCount = 0;
+    let tapTimeout;
+    function handleTripleTap() {
+        tapCount++;
+        if (tapCount === 1) {
+            tapTimeout = setTimeout(() => { tapCount = 0; }, 500);
+        } else if (tapCount === 3) {
+            clearTimeout(tapTimeout);
+            tapCount = 0;
+            try {
+                let elem = document.documentElement;
+                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                    if (elem.requestFullscreen) elem.requestFullscreen().catch(()=>{});
+                    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen().catch(()=>{});
+                }
+            } catch(e){}
+        }
     }
-    document.addEventListener('click', enforceFullScreen, { once: true });
-    document.addEventListener('touchstart', enforceFullScreen, { once: true });
+    document.addEventListener('click', handleTripleTap);
 
     window.showScreen = function(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -470,8 +477,13 @@
         }
     }
 
-    // --- INITIALIZE & PRESENCE (Online/Offline Status) ---
+    // --- FAST BOOT / CACHED INITIALIZATION ---
     document.addEventListener("DOMContentLoaded", () => {
+        let cached = localStorage.getItem('acs_cached_users');
+        if(cached) {
+            window.allUsers = JSON.parse(cached);
+        }
+
         setTimeout(() => {
             const splash = document.getElementById('splash-screen');
             if(splash) {
@@ -484,7 +496,6 @@
             window.currentUser = storedUser;
 
             if (window.currentUser) {
-                // Online Presence System
                 const myStatusRef = ref(db, `users/${window.currentUser}/status`);
                 set(myStatusRef, 'Online');
                 onDisconnect(myStatusRef).set('Offline');
@@ -497,13 +508,14 @@
 
             onValue(ref(db, 'users'), (snapshot) => {
                 window.allUsers = snapshot.val() || {};
+                localStorage.setItem('acs_cached_users', JSON.stringify(window.allUsers)); // Fast load cache
+
                 if(window.currentUser) {
                     if (window.currentUser !== 'Premium VIP' && window.allUsers[window.currentUser]) {
                         document.getElementById('home-my-dp').src = window.allUsers[window.currentUser].dp || "https://ui-avatars.com/api/?name=User&background=667eea&color=fff&size=150";
                     }
                     if(document.getElementById('home-screen').classList.contains('active')) window.renderChatList();
                     
-                    // Update Chat Header Status dynamically
                     if(window.activeChatUser && window.activeChatUser !== 'vip' && window.activeChatUser !== 'Premium VIP') {
                         let status = window.allUsers[window.activeChatUser]?.status || 'Offline';
                         document.getElementById('chat-status-text').innerText = status;
@@ -512,9 +524,9 @@
             });
             onValue(ref(db, 'chats'), (snapshot) => { 
                 window.allGlobalChats = snapshot.val() || {}; 
-                if(document.getElementById('home-screen').classList.contains('active')) window.renderChatList(); // Trigger unread updates
+                if(document.getElementById('home-screen').classList.contains('active')) window.renderChatList(); 
             });
-        }, 2000); 
+        }, 1500); 
     });
 
     window.previewDP = function(event, previewElementId) {
@@ -529,7 +541,6 @@
         }
     }
 
-    // --- AUTHENTICATION ---
     window.checkUsername = function() {
         let val = document.getElementById('reg-user').value.toLowerCase().trim();
         val = val.replace(/[^a-z0-9_]/g, ''); 
@@ -637,7 +648,6 @@
         } catch(e) {}
     }
 
-    // --- PROFILE SETTINGS ---
     window.openProfileSettings = async function() {
         const body = document.getElementById('settings-body-content');
         if(window.currentUser === 'Premium VIP') {
@@ -663,6 +673,15 @@
                 <div style="text-align:center; color:#888; font-size:12px; margin-bottom:20px;">Username: @${window.currentUser}</div>
                 <input type="text" class="input-box" id="edit-name" value="${uData.name || ''}" placeholder="Full Name" style="margin-bottom:15px;">
                 <input type="text" class="input-box" id="edit-pass" value="${uData.pass || ''}" placeholder="New Password" maxlength="6" style="margin-bottom:15px;">
+                <div class="security-box">
+                    <div class="security-title">Update Forget Info</div>
+                    <select id="edit-sq" class="sec-select">
+                        <option value="Birth Place?" ${uData.sq=='Birth Place?'?'selected':''}>Birth Place?</option>
+                        <option value="Favorite Color?" ${uData.sq=='Favorite Color?'?'selected':''}>Favorite Color?</option>
+                        <option value="favourite dish?" ${uData.sq=='favourite dish?'?'selected':''}>favourite dish?</option>
+                    </select>
+                    <input type="text" class="input-box" id="edit-ans" value="${uData.ans || ''}" placeholder="Secret Answer" style="margin-bottom:0; border:none; border-bottom: 2px solid #ddd; border-radius: 0; padding-left: 5px;">
+                </div>
                 <button class="btn-gradient" onclick="window.saveProfileSettings()">Save All Changes</button>
                 <button class="btn-gradient btn-danger" style="margin-top:20px;" onclick="window.logout()">Logout</button>
             `;
@@ -673,15 +692,17 @@
     window.saveProfileSettings = async function() {
         const name = document.getElementById('edit-name').value.trim();
         const pass = document.getElementById('edit-pass').value.trim();
+        const sq = document.getElementById('edit-sq').value;
+        const ans = document.getElementById('edit-ans').value.toLowerCase().trim();
         const dp = tempDPBase64 || window.allUsers[window.currentUser].dp;
-        if(!name || !pass) return window.showToast("Fields cannot be empty!");
+
+        if(!name || !pass || !ans) return window.showToast("Fields cannot be empty!");
         
-        await update(ref(db, `users/${window.currentUser}`), { name, pass, dp });
+        await update(ref(db, `users/${window.currentUser}`), { name, pass, dp, sq, ans });
         window.showToast("Profile Updated!");
         window.loadHome();
     }
 
-    // --- HOME & UNREAD COUNTER ---
     window.loadHome = function() {
         window.showScreen('home-screen');
         if(window.currentUser === 'Premium VIP') {
@@ -702,6 +723,50 @@
             if(name.includes(val)) item.style.display = 'flex';
             else item.style.display = 'none';
         });
+    }
+
+    window.openGlobalChats = function() {
+        const list = document.getElementById('global-chat-list');
+        // Buffering string
+        let htmlContent = '';
+        let hasChats = false;
+        for(let chatId in window.allGlobalChats) {
+            hasChats = true;
+            let msgCount = Object.keys(window.allGlobalChats[chatId]).length;
+            htmlContent += `
+                <div style="background:#fafafa; border:1px solid #ddd; padding:15px; border-radius:10px; margin-bottom:15px;">
+                    <h4 style="color:#764ba2; margin-bottom:5px;">Room ID: ${chatId}</h4>
+                    <p style="font-size:13px; color:#666; margin-bottom:10px;">Total Messages: ${msgCount}</p>
+                    <div style="max-height:150px; overflow-y:auto; background:white; padding:10px; border-radius:5px; border:1px dashed #ccc;">
+                        ${Object.values(window.allGlobalChats[chatId]).map(m => `<div style="font-size:12px; margin-bottom:5px;"><b>${m.from}:</b> ${m.type==='image'?'[Photo]':(m.type==='audio'?'[Audio]':m.text)}</div>`).join('')}
+                    </div>
+                    <button class="btn-gradient btn-danger" style="padding: 6px 12px; font-size:12px; width:auto; margin-top:10px;" onclick="window.deleteGlobalChatRoom('${chatId}')"><i class="fas fa-trash"></i> Delete Chat History</button>
+                </div>
+            `;
+        }
+        if(!hasChats) htmlContent = "<p style='text-align:center;'>No chats found in database.</p>";
+        list.innerHTML = htmlContent;
+        window.showScreen('global-chat-screen');
+    }
+
+    window.deleteGlobalChatRoom = async function(chatId) {
+        if(confirm('WARNING: completely delete this chat room history?')) {
+            await remove(ref(db, 'chats/' + chatId));
+            window.showToast('Chat Room Deleted!');
+            window.openGlobalChats(); 
+        }
+    }
+
+    window.deleteScammer = async function(u) {
+        if(confirm(`WARNING! Ban ${u}?`)) {
+            await remove(ref(db, 'users/' + u));
+            for(let chatId in window.allGlobalChats) {
+                if(chatId.includes(u + "_") || chatId.includes("_" + u) || chatId === u) {
+                    await remove(ref(db, 'chats/' + chatId));
+                }
+            }
+            window.showToast("User removed!");
+        }
     }
 
     window.renderChatList = function() {
@@ -742,7 +807,6 @@
             let displayName = window.allUsers[targetUser].name;
             let dp = window.allUsers[targetUser].dp || "https://ui-avatars.com/api/?name=User&background=667eea&color=fff&size=150";
             
-            // Calculate Unread Messages
             let unreadCount = 0;
             let activeChatId = getChatId(window.currentUser, targetUser);
             if(window.allGlobalChats[activeChatId]) {
@@ -765,7 +829,6 @@
         container.innerHTML = htmlContent;
     }
 
-    // --- CHAT SYSTEM & TRUE BLUE TICKS ---
     window.openChat = function(targetUser, displayName) {
         window.activeChatUser = targetUser;
         document.getElementById('chat-user-name').innerText = displayName;
@@ -789,7 +852,7 @@
 
         activeChatUnsubscribe = onValue(ref(db, 'chats/' + activeChatId), (snapshot) => {
             const box = document.getElementById('chat-box');
-            let htmlContent = `<div class="chat-watermark"><img src="https://ui-avatars.com/api/?name=ACS&background=764ba2&color=fff&size=150&bold=true"><br><h1>ACS Chat</h1></div>`;
+            let htmlContent = `<div class="chat-watermark"><img src="https://i.ibb.co/hFRHRQ97/image.png"><br><h1>ACS Chat</h1></div>`;
             
             if(window.activeChatUser === 'vip' && !snapshot.exists()) {
                 htmlContent += `<div class="message received">Namaste Adarsh Bhai! Main ACS Assistant hoon. Boliye kaise madad karu?<div class="msg-info">${getCurrentTime()}</div></div>`;
@@ -799,7 +862,6 @@
                 let msg = childSnap.val();
                 if(msg.deletedFor && msg.deletedFor.includes(window.currentUser)) return;
 
-                // Mark received messages as read
                 if(msg.from !== window.currentUser && msg.status !== 'read') {
                     update(ref(db, `chats/${activeChatId}/${childSnap.key}`), { status: 'read' });
                 }
@@ -807,7 +869,6 @@
                 let alignClass = msg.from === window.currentUser ? 'sent' : 'received';
                 let tickHTML = '';
                 if(msg.from === window.currentUser) {
-                    // True Blue Tick Logic
                     if(msg.status === 'read' || window.activeChatUser === 'vip') tickHTML = `<i class="fas fa-check-double blue-tick"></i>`;
                     else tickHTML = `<i class="fas fa-check grey-tick"></i>`;
                 }
@@ -831,14 +892,14 @@
         window.showScreen('chat-screen');
     }
 
-    // Pro Keyboard Fix
-    document.getElementById('msg-input').addEventListener('focus', function() {
-        setTimeout(() => {
-            window.scrollTo(0, document.body.scrollHeight);
-            const box = document.getElementById('chat-box');
-            box.scrollTop = box.scrollHeight;
-        }, 300);
-    });
+    window.openImageViewer = function(e) {
+        e.stopPropagation(); 
+        const src = e.target.src;
+        document.getElementById('full-screen-img').src = src;
+        document.getElementById('download-img-link').href = src;
+        document.getElementById('image-viewer').style.display = 'flex';
+    }
+    window.closeImageViewer = function() { document.getElementById('image-viewer').style.display = 'none'; }
 
     window.toggleMicSend = function() {
         const input = document.getElementById('msg-input').value;
@@ -879,11 +940,59 @@
         }
     }
 
-    document.getElementById('msg-input').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') { e.preventDefault(); window.handleSendTextAction(); }
-    });
+    let mediaRecorder;
+    let audioChunks = [];
+    let isRecordingAudio = false;
 
-    // --- REALTIME WEBRTC CALLING (TRUE AUDIO & VIDEO) ---
+    window.startRealRecord = async function(e) {
+        if(document.getElementById('msg-input').value.trim().length > 0) return;
+        if(e) { e.preventDefault(); e.stopPropagation(); }
+        try {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            mediaRecorder = new MediaRecorder(stream);
+            audioChunks = [];
+            mediaRecorder.ondataavailable = event => { audioChunks.push(event.data); };
+            mediaRecorder.onstop = () => {
+                const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+                const reader = new FileReader();
+                reader.readAsDataURL(audioBlob);
+                reader.onloadend = async function() { 
+                    let activeChatId = getChatId(window.currentUser, window.activeChatUser);
+                    await push(ref(db, 'chats/' + activeChatId), {
+                        from: window.currentUser, text: reader.result, type: 'audio', time: getCurrentTime()
+                    });
+                }
+            };
+            mediaRecorder.start();
+            isRecordingAudio = true;
+            document.getElementById('send-btn-icon').classList.add('recording');
+        } catch(err) { window.showToast("Mic permission denied!"); }
+    }
+
+    window.stopRealRecord = function(e) {
+        if(e) { e.preventDefault(); e.stopPropagation(); }
+        if(isRecordingAudio && mediaRecorder && mediaRecorder.state === "recording") {
+            mediaRecorder.stop();
+            isRecordingAudio = false;
+            document.getElementById('send-btn-icon').classList.remove('recording');
+        }
+    }
+
+    window.sendImageMsg = async function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            window.showToast("Sending Image...");
+            const reader = new FileReader();
+            reader.onload = async function(e) { 
+                let activeChatId = getChatId(window.currentUser, window.activeChatUser);
+                await push(ref(db, 'chats/' + activeChatId), {
+                    from: window.currentUser, text: e.target.result, type: 'image', time: getCurrentTime()
+                });
+            }
+            reader.readAsDataURL(file);
+        }
+    }
+
     window.listenForIncomingCalls = function() {
         if(callListener) callListener(); 
         callListener = onValue(ref(db, 'calls/' + window.currentUser), async (snap) => {
@@ -897,7 +1006,6 @@
                     document.getElementById('incoming-call-screen').style.display = 'flex';
                     document.getElementById('audio-ringtone').play().catch(e=>{});
                 } else if (callData.status === 'answered' && window.activeChatUser === callData.from) {
-                    // Receiver answered, process WebRTC answer
                     if(peerConnection && callData.answer) {
                         await peerConnection.setRemoteDescription(new RTCSessionDescription(callData.answer));
                     }
@@ -907,20 +1015,15 @@
                     document.getElementById('audio-ringtone').pause();
                     set(ref(db, 'calls/' + window.currentUser), null); 
                 }
-                
-                // Handle ICE candidates
-                if(callData.ice) {
-                    if(peerConnection) peerConnection.addIceCandidate(new RTCIceCandidate(callData.ice));
+                if(callData.ice && peerConnection) {
+                    peerConnection.addIceCandidate(new RTCIceCandidate(callData.ice));
                 }
             }
         });
     }
 
     window.initiateCall = async function(type) {
-        if(window.activeChatUser === 'vip') {
-            alert("ACS Assistant abhi call nahi utha sakta, message bhejiye!");
-            return;
-        }
+        if(window.activeChatUser === 'vip') { alert("Please message the AI Assistant!"); return; }
         currentCallType = type;
         document.getElementById('audio-ringback').play().catch(e=>{});
         
@@ -934,16 +1037,16 @@
         } else {
             document.getElementById('video-call-name').innerText = targetName;
             document.getElementById('video-call-status').innerText = 'Ringing...';
-            document.getElementById('remote-video-placeholder').src = targetDp; // Placeholder till connect
+            document.getElementById('remote-video-placeholder').src = targetDp; 
             window.showScreen('video-call-screen');
         }
 
-        // Setup WebRTC
         peerConnection = new RTCPeerConnection(servers);
-        
-        localStream = await navigator.mediaDevices.getUserMedia({ video: type==='video', audio: true });
-        if(type === 'video') document.getElementById('local-video').srcObject = localStream;
-        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ video: type==='video', audio: true });
+            if(type === 'video') document.getElementById('local-video').srcObject = localStream;
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+        } catch(e) { window.showToast("Camera/Mic not found"); }
 
         peerConnection.ontrack = event => {
             if(type === 'video') {
@@ -959,9 +1062,7 @@
         };
 
         peerConnection.onicecandidate = event => {
-            if(event.candidate) {
-                update(ref(db, 'calls/' + window.activeChatUser), { ice: event.candidate.toJSON() });
-            }
+            if(event.candidate) update(ref(db, 'calls/' + window.activeChatUser), { ice: event.candidate.toJSON() });
         };
 
         const offer = await peerConnection.createOffer();
@@ -991,18 +1092,23 @@
         let callerId = callData.from;
 
         if(currentCallType === 'audio') {
+            document.getElementById('audio-call-name').innerText = document.getElementById('caller-name').innerText;
+            document.getElementById('audio-call-dp').src = document.getElementById('caller-dp').src;
             document.getElementById('audio-call-status').innerText = 'Connected';
             window.showScreen('audio-call-screen');
         } else {
+            document.getElementById('video-call-name').innerText = document.getElementById('caller-name').innerText;
             document.getElementById('video-call-status').innerText = 'Connected';
+            document.getElementById('remote-video-placeholder').src = document.getElementById('caller-dp').src;
             window.showScreen('video-call-screen');
         }
 
-        // Setup WebRTC Answer
         peerConnection = new RTCPeerConnection(servers);
-        localStream = await navigator.mediaDevices.getUserMedia({ video: currentCallType==='video', audio: true });
-        if(currentCallType === 'video') document.getElementById('local-video').srcObject = localStream;
-        localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+        try {
+            localStream = await navigator.mediaDevices.getUserMedia({ video: currentCallType==='video', audio: true });
+            if(currentCallType === 'video') document.getElementById('local-video').srcObject = localStream;
+            localStream.getTracks().forEach(track => peerConnection.addTrack(track, localStream));
+        } catch(e) { window.showToast("Camera/Mic error"); }
 
         peerConnection.ontrack = event => {
             if(currentCallType === 'video') {
@@ -1042,27 +1148,14 @@
     }
 
     window.endCallUI = function() {
-        if(localStream) {
-            localStream.getTracks().forEach(track => track.stop());
-            localStream = null;
-        }
-        if(peerConnection) {
-            peerConnection.close();
-            peerConnection = null;
-        }
-        // Remove dynamic remote video if exists
+        if(localStream) { localStream.getTracks().forEach(track => track.stop()); localStream = null; }
+        if(peerConnection) { peerConnection.close(); peerConnection = null; }
         const remVids = document.querySelectorAll('video[style*="z-index: 4000"]');
         remVids.forEach(v => v.remove());
         document.getElementById('remote-video-placeholder').style.display = 'block';
-
         window.showScreen('chat-screen');
     }
 
-    // --- OTHER FUNCS ---
-    window.openImageViewer = function(e) { e.stopPropagation(); document.getElementById('full-screen-img').src = e.target.src; document.getElementById('download-img-link').href = e.target.src; document.getElementById('image-viewer').style.display = 'flex'; }
-    window.closeImageViewer = function() { document.getElementById('image-viewer').style.display = 'none'; }
-    
-    // (Selection, Delete, Forward logic remains exactly same, hidden to save space, but functional via standard DOM tracking)
     let isSelectionMode = false;
     let selectedMsgIds = [];
     let longPressTimer;
@@ -1077,31 +1170,79 @@
     }
     window.handleTouchEnd = function() { clearTimeout(longPressTimer); }
     window.handleMsgClick = function(msgId) { if(isSelectionMode) window.toggleSelection(msgId); }
+
     window.toggleSelection = function(msgId) {
         const idx = selectedMsgIds.indexOf(msgId);
         const elem = document.getElementById(`msg-${msgId}`);
-        if(idx > -1) { selectedMsgIds.splice(idx, 1); elem.classList.remove('msg-selected'); } 
-        else { selectedMsgIds.push(msgId); elem.classList.add('msg-selected'); }
+        if(idx > -1) {
+            selectedMsgIds.splice(idx, 1);
+            elem.classList.remove('msg-selected');
+        } else {
+            selectedMsgIds.push(msgId);
+            elem.classList.add('msg-selected');
+        }
         document.getElementById('del-count').innerText = `${selectedMsgIds.length} Selected`;
         if(selectedMsgIds.length === 0) window.cancelDelete();
     }
-    window.cancelDelete = function() { isSelectionMode = false; selectedMsgIds = []; document.getElementById('delete-header').style.display = 'none'; document.querySelectorAll('.message').forEach(m => m.classList.remove('msg-selected')); }
+
+    window.cancelDelete = function() {
+        isSelectionMode = false;
+        selectedMsgIds = [];
+        document.getElementById('delete-header').style.display = 'none';
+        document.querySelectorAll('.message').forEach(m => m.classList.remove('msg-selected'));
+    }
+
+    window.openForwardModal = function() {
+        const list = document.getElementById('forward-user-list');
+        list.innerHTML = '';
+        for(let u in window.allUsers) {
+            if(u === window.currentUser) continue;
+            list.innerHTML += `<div style="padding: 12px; border-bottom: 1px solid #eee; cursor: pointer; font-size:16px; font-weight:500;" onclick="window.forwardMessages('${u}')">➡️ ${window.allUsers[u].name}</div>`;
+        }
+        document.getElementById('forward-modal').style.display = 'flex';
+    }
+    
+    window.closeForwardModal = function() { document.getElementById('forward-modal').style.display = 'none'; }
+
+    window.forwardMessages = async function(targetUser) {
+        let activeChatId = getChatId(window.currentUser, window.activeChatUser);
+        let targetChatId = getChatId(window.currentUser, targetUser);
+        
+        window.showToast("Forwarding...");
+        for(let id of selectedMsgIds) {
+            let msgSnap = await get(child(ref(db), `chats/${activeChatId}/${id}`));
+            if(msgSnap.exists()) {
+                let m = msgSnap.val();
+                await push(ref(db, 'chats/' + targetChatId), {
+                    from: window.currentUser, text: m.text, type: m.type || 'text', time: getCurrentTime()
+                });
+            }
+        }
+        window.closeForwardModal();
+        window.cancelDelete();
+        window.showToast("Message Forwarded!");
+    }
+
     window.openDeleteModal = function() { document.getElementById('delete-modal').style.display = 'flex'; }
     window.closeDeleteModal = function() { document.getElementById('delete-modal').style.display = 'none'; }
+
     window.executeDelete = async function(type) {
         let activeChatId = getChatId(window.currentUser, window.activeChatUser);
         for (let id of selectedMsgIds) {
-            if(type === 'everyone') await remove(ref(db, `chats/${activeChatId}/${id}`));
-            else if(type === 'me') {
+            if(type === 'everyone') {
+                await remove(ref(db, `chats/${activeChatId}/${id}`));
+            } else if(type === 'me') {
                 const snap = await get(child(ref(db), `chats/${activeChatId}/${id}`));
                 if(snap.exists()) {
-                    let deletedFor = snap.val().deletedFor || [];
+                    let data = snap.val();
+                    let deletedFor = data.deletedFor || [];
                     if(!deletedFor.includes(window.currentUser)) deletedFor.push(window.currentUser);
                     await set(ref(db, `chats/${activeChatId}/${id}/deletedFor`), deletedFor);
                 }
             }
         }
-        window.closeDeleteModal(); window.cancelDelete();
+        window.closeDeleteModal();
+        window.cancelDelete();
     }
 </script>
 </body>
