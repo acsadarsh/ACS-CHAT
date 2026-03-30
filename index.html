@@ -135,7 +135,6 @@
         .call-controls { display: flex; justify-content: center; gap: 35px; margin-bottom: 60px; width: 100%; }
         .call-btn { width: 65px; height: 65px; border-radius: 50%; border: none; font-size: 26px; color: white; background: rgba(255,255,255,0.2); cursor: pointer; display: flex; justify-content: center; align-items: center; backdrop-filter: blur(5px); transition: 0.3s; }
         .call-btn.end { background: #e74c3c; transform: scale(1.1); box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); }
-        .call-btn.active { background: white; color: #2c3e50; }
 
         #video-call-screen { background: #000; color: white; z-index: 4000; position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: none; flex-direction: column; justify-content: space-between; }
         .video-header { position: absolute; top: 40px; left: 0; width: 100%; text-align: center; z-index: 4002; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
@@ -146,8 +145,6 @@
         .modal-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 6000; justify-content: center; align-items: center; }
         .delete-box { background: white; padding: 20px; border-radius: 15px; width: 85%; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
         .delete-box p { padding: 12px; margin: 10px 0; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 15px; }
-        .del-everyone { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .del-me { background: #e2e3e5; color: #383d41; border: 1px solid #d6d8db; }
 
         .image-viewer-modal { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 6000; flex-direction: column; justify-content: center; align-items: center; }
         .image-viewer-modal img { max-width: 95%; max-height: 75vh; object-fit: contain; border-radius: 10px; }
@@ -199,9 +196,9 @@
         <div class="handled-by">Handled by Adarsh Chandravanshi</div>
         
         <div class="tabs">
-            <div class="tab active-tab" onclick="window.switchAuthTab('register')">New User</div>
-            <div class="tab" onclick="window.switchAuthTab('login')">Login</div>
-            <div class="tab" onclick="window.switchAuthTab('premium')">Premium</div>
+            <div class="tab active-tab" id="tab-register" onclick="window.switchAuthTab('register')">New User</div>
+            <div class="tab" id="tab-login" onclick="window.switchAuthTab('login')">Login</div>
+            <div class="tab" id="tab-premium" onclick="window.switchAuthTab('premium')">Premium</div>
         </div>
 
         <div id="form-register" class="form-container active-form">
@@ -238,7 +235,7 @@
 
         <div id="form-premium" class="form-container">
             <div style="text-align:center; margin-bottom: 20px;">
-                <img src="https://ui-avatars.com/api/?name=ACS&background=f2994a&color=fff&size=150&bold=true" style="width:80px; height:80px; border-radius:50%; border:3px solid #f2994a; object-fit:cover;">
+                <img src="https://ui-avatars.com/api/?name=ACS&background=f2994a&color=fff&size=150&bold=true" style="width:80px; height:80px; border-radius:50%; margin-bottom:10px; object-fit:cover; border:3px solid #f2994a;">
                 <h3 style="color:#f2994a;">Premium VIP</h3>
             </div>
             <input type="password" class="input-box" id="premium-pass" placeholder="Enter Premium PIN" maxlength="6">
@@ -418,7 +415,7 @@
     
     const servers = { iceServers: [{ urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'] }] };
 
-    // --- FULL SCREEN TRIPLE TAP FIX ---
+    // --- FULL SCREEN TRIPLE TAP ---
     let tapCount = 0;
     let tapTimeout;
     function handleTripleTap() {
@@ -438,6 +435,7 @@
         }
     }
     document.addEventListener('click', handleTripleTap);
+    document.addEventListener('touchstart', handleTripleTap); // Works for mobile touch too
 
     window.showScreen = function(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -452,6 +450,7 @@
         if(window.cancelDelete) window.cancelDelete();
     }
 
+    // --- TABS FIXED ---
     window.switchAuthTab = function(tab) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active-tab'));
         document.querySelectorAll('.form-container').forEach(f => f.classList.remove('active-form'));
@@ -508,7 +507,7 @@
 
             onValue(ref(db, 'users'), (snapshot) => {
                 window.allUsers = snapshot.val() || {};
-                localStorage.setItem('acs_cached_users', JSON.stringify(window.allUsers)); // Fast load cache
+                localStorage.setItem('acs_cached_users', JSON.stringify(window.allUsers)); 
 
                 if(window.currentUser) {
                     if (window.currentUser !== 'Premium VIP' && window.allUsers[window.currentUser]) {
@@ -655,7 +654,8 @@
                 <div style="text-align:center; margin-top:30px;">
                     <img src="https://ui-avatars.com/api/?name=ACS&background=f2994a&color=fff&size=150&bold=true" style="width:100px; height:100px; border-radius:50%; border:4px solid #f2994a; margin-bottom:20px; object-fit:cover;">
                     <h2 style="color:#764ba2;">Premium Admin</h2>
-                    <button class="btn-gradient btn-fixer" onclick="window.fixAppIssues()" style="margin-bottom:20px;"><i class="fas fa-wrench"></i> Run System Fixer</button>
+                    <p style="color:#888; margin-bottom:40px;">Full Database Access</p>
+                    <button class="btn-gradient btn-fixer" onclick="window.fixAppIssues()" style="margin-bottom:20px; background: linear-gradient(to right, #4facfe, #00f2fe);"><i class="fas fa-wrench"></i> Run System Fixer</button>
                     <button class="btn-gradient btn-danger" onclick="window.logout()">Logout Admin</button>
                 </div>
             `;
@@ -678,7 +678,7 @@
                     <select id="edit-sq" class="sec-select">
                         <option value="Birth Place?" ${uData.sq=='Birth Place?'?'selected':''}>Birth Place?</option>
                         <option value="Favorite Color?" ${uData.sq=='Favorite Color?'?'selected':''}>Favorite Color?</option>
-                        <option value="favourite dish?" ${uData.sq=='favourite dish?'?'selected':''}>favourite dish?</option>
+                        <option value="First Pet Name?" ${uData.sq=='First Pet Name?'?'selected':''}>First Pet Name?</option>
                     </select>
                     <input type="text" class="input-box" id="edit-ans" value="${uData.ans || ''}" placeholder="Secret Answer" style="margin-bottom:0; border:none; border-bottom: 2px solid #ddd; border-radius: 0; padding-left: 5px;">
                 </div>
@@ -698,8 +698,9 @@
 
         if(!name || !pass || !ans) return window.showToast("Fields cannot be empty!");
         
+        window.showToast("Saving...");
         await update(ref(db, `users/${window.currentUser}`), { name, pass, dp, sq, ans });
-        window.showToast("Profile Updated!");
+        window.showToast("Profile Updated Successfully!");
         window.loadHome();
     }
 
@@ -727,7 +728,6 @@
 
     window.openGlobalChats = function() {
         const list = document.getElementById('global-chat-list');
-        // Buffering string
         let htmlContent = '';
         let hasChats = false;
         for(let chatId in window.allGlobalChats) {
@@ -829,6 +829,7 @@
         container.innerHTML = htmlContent;
     }
 
+    // --- CHAT SYSTEM ---
     window.openChat = function(targetUser, displayName) {
         window.activeChatUser = targetUser;
         document.getElementById('chat-user-name').innerText = displayName;
@@ -931,8 +932,16 @@
                 document.getElementById('chat-status-text').innerText = 'typing...';
                 setTimeout(() => {
                     let reply = "Main samajh nahi paya! Aap Adarsh se contact karein (8252900810)";
+                    let t = text.toLowerCase();
+                    if(t.includes('hi') || t.includes('hello')) reply = "Hello! Main ACS Assistant hoon, boliye kaise madad karu?";
+                    if(t.includes('kaise') || t.includes('kya haal')) reply = "Main ekdum mast hoon! Aap sunaiye?";
+                    if(t.includes('password') || t.includes('bhul')) reply = "Login screen par 'Forgot Password' dabaiye aur apna Secret Answer dalein.";
+                    if(t.includes('acs') || t.includes('adarsh')) reply = "Adarsh Chandravanshi (ACS) ne mujhe banaya hai. Unka whatsapp: 8252900810";
+                    if(t.includes('call') || t.includes('video')) reply = "Upar Video ya Audio Call (Icon) dabakar live call karein!";
+                    if(t.includes('photo') || t.includes('pic')) reply = "Niche camera button (📷) daba kar mujhe photo bhej sakte hain!";
+
                     push(ref(db, 'chats/' + activeChatId), { 
-                        from: 'vip', text: reply, time: getCurrentTime(), type: 'text', status: 'sent'
+                        from: 'vip', text: reply, time: getCurrentTime(), type: 'text', status: 'sent' 
                     });
                     document.getElementById('chat-status-text').innerText = 'AI Assistant';
                 }, 1500);
@@ -993,6 +1002,10 @@
         }
     }
 
+    document.getElementById('msg-input').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') { e.preventDefault(); window.handleSendTextAction(); }
+    });
+
     window.listenForIncomingCalls = function() {
         if(callListener) callListener(); 
         callListener = onValue(ref(db, 'calls/' + window.currentUser), async (snap) => {
@@ -1004,6 +1017,8 @@
                     document.getElementById('caller-name').innerText = window.allUsers[callData.from]?.name || callData.from;
                     document.getElementById('caller-dp').src = window.allUsers[callData.from]?.dp || "https://ui-avatars.com/api/?name=ACS&background=f2994a&color=fff&size=150&bold=true";
                     document.getElementById('incoming-call-screen').style.display = 'flex';
+                    document.getElementById('call-timer').style.display = 'none';
+                    document.getElementById('incoming-call-controls').style.display = 'flex';
                     document.getElementById('audio-ringtone').play().catch(e=>{});
                 } else if (callData.status === 'answered' && window.activeChatUser === callData.from) {
                     if(peerConnection && callData.answer) {
@@ -1013,6 +1028,7 @@
                     window.endCallUI();
                     document.getElementById('incoming-call-screen').style.display = 'none';
                     document.getElementById('audio-ringtone').pause();
+                    document.getElementById('audio-connected').pause();
                     set(ref(db, 'calls/' + window.currentUser), null); 
                 }
                 if(callData.ice && peerConnection) {
@@ -1023,7 +1039,10 @@
     }
 
     window.initiateCall = async function(type) {
-        if(window.activeChatUser === 'vip') { alert("Please message the AI Assistant!"); return; }
+        if(window.activeChatUser === 'vip') {
+            alert("ACS Assistant abhi live call nahi utha sakta, please use chat!");
+            return;
+        }
         currentCallType = type;
         document.getElementById('audio-ringback').play().catch(e=>{});
         
@@ -1170,27 +1189,15 @@
     }
     window.handleTouchEnd = function() { clearTimeout(longPressTimer); }
     window.handleMsgClick = function(msgId) { if(isSelectionMode) window.toggleSelection(msgId); }
-
     window.toggleSelection = function(msgId) {
         const idx = selectedMsgIds.indexOf(msgId);
         const elem = document.getElementById(`msg-${msgId}`);
-        if(idx > -1) {
-            selectedMsgIds.splice(idx, 1);
-            elem.classList.remove('msg-selected');
-        } else {
-            selectedMsgIds.push(msgId);
-            elem.classList.add('msg-selected');
-        }
+        if(idx > -1) { selectedMsgIds.splice(idx, 1); elem.classList.remove('msg-selected'); } 
+        else { selectedMsgIds.push(msgId); elem.classList.add('msg-selected'); }
         document.getElementById('del-count').innerText = `${selectedMsgIds.length} Selected`;
         if(selectedMsgIds.length === 0) window.cancelDelete();
     }
-
-    window.cancelDelete = function() {
-        isSelectionMode = false;
-        selectedMsgIds = [];
-        document.getElementById('delete-header').style.display = 'none';
-        document.querySelectorAll('.message').forEach(m => m.classList.remove('msg-selected'));
-    }
+    window.cancelDelete = function() { isSelectionMode = false; selectedMsgIds = []; document.getElementById('delete-header').style.display = 'none'; document.querySelectorAll('.message').forEach(m => m.classList.remove('msg-selected')); }
 
     window.openForwardModal = function() {
         const list = document.getElementById('forward-user-list');
@@ -1207,7 +1214,6 @@
     window.forwardMessages = async function(targetUser) {
         let activeChatId = getChatId(window.currentUser, window.activeChatUser);
         let targetChatId = getChatId(window.currentUser, targetUser);
-        
         window.showToast("Forwarding...");
         for(let id of selectedMsgIds) {
             let msgSnap = await get(child(ref(db), `chats/${activeChatId}/${id}`));
@@ -1218,9 +1224,7 @@
                 });
             }
         }
-        window.closeForwardModal();
-        window.cancelDelete();
-        window.showToast("Message Forwarded!");
+        window.closeForwardModal(); window.cancelDelete(); window.showToast("Message Forwarded!");
     }
 
     window.openDeleteModal = function() { document.getElementById('delete-modal').style.display = 'flex'; }
@@ -1229,20 +1233,17 @@
     window.executeDelete = async function(type) {
         let activeChatId = getChatId(window.currentUser, window.activeChatUser);
         for (let id of selectedMsgIds) {
-            if(type === 'everyone') {
-                await remove(ref(db, `chats/${activeChatId}/${id}`));
-            } else if(type === 'me') {
+            if(type === 'everyone') await remove(ref(db, `chats/${activeChatId}/${id}`));
+            else if(type === 'me') {
                 const snap = await get(child(ref(db), `chats/${activeChatId}/${id}`));
                 if(snap.exists()) {
-                    let data = snap.val();
-                    let deletedFor = data.deletedFor || [];
+                    let deletedFor = snap.val().deletedFor || [];
                     if(!deletedFor.includes(window.currentUser)) deletedFor.push(window.currentUser);
                     await set(ref(db, `chats/${activeChatId}/${id}/deletedFor`), deletedFor);
                 }
             }
         }
-        window.closeDeleteModal();
-        window.cancelDelete();
+        window.closeDeleteModal(); window.cancelDelete();
     }
 </script>
 </body>
