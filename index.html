@@ -138,7 +138,7 @@
 
         #video-call-screen { background: #000; color: white; z-index: 4000; position: absolute; width: 100%; height: 100%; top: 0; left: 0; display: none; flex-direction: column; justify-content: space-between; }
         .video-header { position: absolute; top: 40px; left: 0; width: 100%; text-align: center; z-index: 4002; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
-        #remote-video-placeholder { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 4000; opacity: 0.5; filter: blur(10px); }
+        #remote-video-placeholder { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 4000; background: #222; }
         #local-video { position: absolute; top: 20px; right: 20px; width: 110px; height: 160px; object-fit: cover; border-radius: 12px; border: 2px solid white; z-index: 4002; box-shadow: 0 4px 10px rgba(0,0,0,0.5); background: #333; }
         .video-controls { position: absolute; bottom: 40px; left: 0; width: 100%; display: flex; justify-content: center; gap: 30px; z-index: 4002; }
 
@@ -157,7 +157,7 @@
 <body>
 
 <div id="splash-screen" class="splash-screen">
-    <img src="https://i.ibb.co/hFRHRQ97/image.png" class="splash-logo">
+    <img src="https://ui-avatars.com/api/?name=ACS&background=764ba2&color=fff&size=150&bold=true" class="splash-logo">
     <h1 style="color: #764ba2; font-size: 36px; margin:0; font-weight:900;">ACS Chat</h1>
     <p style="color: #f2994a; font-weight: bold; margin-top: 15px; font-size:14px; letter-spacing:1px;">Handled by Adarsh Chandravanshi</p>
 </div>
@@ -192,7 +192,7 @@
 
 <div class="app-container">
     <div id="auth-screen" class="screen">
-        <div class="auth-logo"><img src="https://i.ibb.co/hFRHRQ97/image.png" alt="ACS"></div>
+        <div class="auth-logo"><img src="https://ui-avatars.com/api/?name=ACS&background=764ba2&color=fff&size=150&bold=true" alt="ACS"></div>
         <div class="handled-by">Handled by Adarsh Chandravanshi</div>
         
         <div class="tabs">
@@ -244,7 +244,7 @@
     </div>
 
     <div id="forgot-screen" class="screen">
-        <div class="auth-logo"><img src="https://i.ibb.co/hFRHRQ97/image.png"></div>
+        <div class="auth-logo"><img src="https://ui-avatars.com/api/?name=ACS&background=764ba2&color=fff&size=150&bold=true"></div>
         <div class="form-container active-form">
             <input type="text" class="input-box" id="for-user" placeholder="Enter Username">
             <button class="btn-gradient" onclick="window.checkSecurity()">Find User</button>
@@ -262,7 +262,7 @@
         <div class="home-header gradient-bg">
             <div class="home-top">
                 <div class="home-logo-area">
-                    <img src="https://i.ibb.co/hFRHRQ97/image.png" style="width:40px; height:40px; border-radius:50%; border:2px solid white;">
+                    <img src="https://ui-avatars.com/api/?name=ACS&background=f2994a&color=fff&size=150&bold=true" style="width:40px; height:40px; border-radius:50%; border:2px solid white;">
                     <h2>ACS Chat</h2>
                 </div>
                 <div class="profile-icon" onclick="window.openProfileSettings()">
@@ -351,7 +351,7 @@
         
         <div class="chat-body" id="chat-box">
             <div class="chat-watermark">
-                <img src="https://i.ibb.co/hFRHRQ97/image.png"><br>
+                <img src="https://ui-avatars.com/api/?name=ACS&background=764ba2&color=fff&size=150&bold=true"><br>
                 <h1>ACS Chat</h1>
             </div>
         </div>
@@ -435,7 +435,7 @@
         }
     }
     document.addEventListener('click', handleTripleTap);
-    document.addEventListener('touchstart', handleTripleTap); // Works for mobile touch too
+    document.addEventListener('touchstart', handleTripleTap); 
 
     window.showScreen = function(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
@@ -450,10 +450,10 @@
         if(window.cancelDelete) window.cancelDelete();
     }
 
-    // --- TABS FIXED ---
+    // THE FIX: ONLY remove active class from Auth Screen forms, NOT Forgot Screen form
     window.switchAuthTab = function(tab) {
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active-tab'));
-        document.querySelectorAll('.form-container').forEach(f => f.classList.remove('active-form'));
+        document.querySelectorAll('#auth-screen .form-container').forEach(f => f.classList.remove('active-form'));
         document.getElementById(`tab-${tab}`).classList.add('active-tab');
         document.getElementById(`form-${tab}`).classList.add('active-form');
     }
@@ -829,7 +829,6 @@
         container.innerHTML = htmlContent;
     }
 
-    // --- CHAT SYSTEM ---
     window.openChat = function(targetUser, displayName) {
         window.activeChatUser = targetUser;
         document.getElementById('chat-user-name').innerText = displayName;
@@ -853,7 +852,7 @@
 
         activeChatUnsubscribe = onValue(ref(db, 'chats/' + activeChatId), (snapshot) => {
             const box = document.getElementById('chat-box');
-            let htmlContent = `<div class="chat-watermark"><img src="https://i.ibb.co/hFRHRQ97/image.png"><br><h1>ACS Chat</h1></div>`;
+            let htmlContent = `<div class="chat-watermark"><img src="https://ui-avatars.com/api/?name=ACS&background=764ba2&color=fff&size=150&bold=true"><br><h1>ACS Chat</h1></div>`;
             
             if(window.activeChatUser === 'vip' && !snapshot.exists()) {
                 htmlContent += `<div class="message received">Namaste Adarsh Bhai! Main ACS Assistant hoon. Boliye kaise madad karu?<div class="msg-info">${getCurrentTime()}</div></div>`;
@@ -1040,7 +1039,7 @@
 
     window.initiateCall = async function(type) {
         if(window.activeChatUser === 'vip') {
-            alert("ACS Assistant abhi live call nahi utha sakta, please use chat!");
+            alert("ACS Assistant abhi call nahi utha sakta, message bhejiye!");
             return;
         }
         currentCallType = type;
@@ -1189,15 +1188,27 @@
     }
     window.handleTouchEnd = function() { clearTimeout(longPressTimer); }
     window.handleMsgClick = function(msgId) { if(isSelectionMode) window.toggleSelection(msgId); }
+
     window.toggleSelection = function(msgId) {
         const idx = selectedMsgIds.indexOf(msgId);
         const elem = document.getElementById(`msg-${msgId}`);
-        if(idx > -1) { selectedMsgIds.splice(idx, 1); elem.classList.remove('msg-selected'); } 
-        else { selectedMsgIds.push(msgId); elem.classList.add('msg-selected'); }
+        if(idx > -1) {
+            selectedMsgIds.splice(idx, 1);
+            elem.classList.remove('msg-selected');
+        } else {
+            selectedMsgIds.push(msgId);
+            elem.classList.add('msg-selected');
+        }
         document.getElementById('del-count').innerText = `${selectedMsgIds.length} Selected`;
         if(selectedMsgIds.length === 0) window.cancelDelete();
     }
-    window.cancelDelete = function() { isSelectionMode = false; selectedMsgIds = []; document.getElementById('delete-header').style.display = 'none'; document.querySelectorAll('.message').forEach(m => m.classList.remove('msg-selected')); }
+
+    window.cancelDelete = function() {
+        isSelectionMode = false;
+        selectedMsgIds = [];
+        document.getElementById('delete-header').style.display = 'none';
+        document.querySelectorAll('.message').forEach(m => m.classList.remove('msg-selected'));
+    }
 
     window.openForwardModal = function() {
         const list = document.getElementById('forward-user-list');
@@ -1214,6 +1225,7 @@
     window.forwardMessages = async function(targetUser) {
         let activeChatId = getChatId(window.currentUser, window.activeChatUser);
         let targetChatId = getChatId(window.currentUser, targetUser);
+        
         window.showToast("Forwarding...");
         for(let id of selectedMsgIds) {
             let msgSnap = await get(child(ref(db), `chats/${activeChatId}/${id}`));
